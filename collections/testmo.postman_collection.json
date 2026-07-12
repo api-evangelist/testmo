@@ -1,0 +1,253 @@
+{
+  "info": {
+    "name": "Testmo REST API",
+    "description": "Read access to the major entities of a Testmo unified test management instance - projects, manual test runs and results, automation runs, automation sources, exploratory sessions, and milestones - plus a beta test case management surface (cases, folders, attachments). Base URL is per-instance: https://{instance}.testmo.net/api/v1. Authenticate with a personal API token generated from your Testmo profile page, passed as Authorization: Bearer <token>. Modeled from Testmo public docs (docs.testmo.com) and blog posts.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      { "key": "token", "value": "{{apiToken}}", "type": "string" }
+    ]
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "https://{{instance}}.testmo.net/api/v1", "type": "string" },
+    { "key": "instance", "value": "your-name", "type": "string" },
+    { "key": "apiToken", "value": "", "type": "string" }
+  ],
+  "item": [
+    {
+      "name": "Projects",
+      "item": [
+        {
+          "name": "List projects",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/projects", "host": ["{{baseUrl}}"], "path": ["projects"] },
+            "description": "Lists all projects visible to the authenticated user."
+          }
+        },
+        {
+          "name": "Get a project",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/projects/:project_id", "host": ["{{baseUrl}}"], "path": ["projects", ":project_id"], "variable": [{ "key": "project_id", "value": "" }] },
+            "description": "Retrieves a single project by its ID."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Test Runs",
+      "item": [
+        {
+          "name": "List test runs for a project",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/projects/:project_id/runs", "host": ["{{baseUrl}}"], "path": ["projects", ":project_id", "runs"], "variable": [{ "key": "project_id", "value": "" }] },
+            "description": "Lists the manual test runs of a project with aggregated statistics; supports filters."
+          }
+        },
+        {
+          "name": "Get a test run",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/runs/:run_id", "host": ["{{baseUrl}}"], "path": ["runs", ":run_id"], "variable": [{ "key": "run_id", "value": "" }] },
+            "description": "Retrieves a single manual test run with aggregated statistics and test numbers."
+          }
+        },
+        {
+          "name": "List results for a test run",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/runs/:run_id/results?status_id=&created_by=&expands=users,issues",
+              "host": ["{{baseUrl}}"],
+              "path": ["runs", ":run_id", "results"],
+              "query": [
+                { "key": "status_id", "value": "" },
+                { "key": "created_by", "value": "" },
+                { "key": "expands", "value": "users,issues" }
+              ],
+              "variable": [{ "key": "run_id", "value": "" }]
+            },
+            "description": "Extracts and filters the individual test results of a manual test run."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Automation Runs",
+      "item": [
+        {
+          "name": "List automation runs for a project",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/projects/:project_id/automation/runs", "host": ["{{baseUrl}}"], "path": ["projects", ":project_id", "automation", "runs"], "variable": [{ "key": "project_id", "value": "" }] },
+            "description": "Lists the automation runs of a project with aggregated result statistics."
+          }
+        },
+        {
+          "name": "Get an automation run",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/automation/runs/:run_id", "host": ["{{baseUrl}}"], "path": ["automation", "runs", ":run_id"], "variable": [{ "key": "run_id", "value": "" }] },
+            "description": "Retrieves a single automation run, including aggregated statistics and overall status."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Automation Sources",
+      "item": [
+        {
+          "name": "List automation sources for a project",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/projects/:project_id/automation/sources", "host": ["{{baseUrl}}"], "path": ["projects", ":project_id", "automation", "sources"], "variable": [{ "key": "project_id", "value": "" }] },
+            "description": "Lists the automation sources of a project with average and aggregated metrics."
+          }
+        },
+        {
+          "name": "Get an automation source",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/automation/sources/:source_id", "host": ["{{baseUrl}}"], "path": ["automation", "sources", ":source_id"], "variable": [{ "key": "source_id", "value": "" }] },
+            "description": "Retrieves a single automation source with aggregated statistics and metrics."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Sessions",
+      "item": [
+        {
+          "name": "List sessions for a project",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/projects/:project_id/sessions", "host": ["{{baseUrl}}"], "path": ["projects", ":project_id", "sessions"], "variable": [{ "key": "project_id", "value": "" }] },
+            "description": "Lists active or closed exploratory sessions of a project with result statistics."
+          }
+        },
+        {
+          "name": "Get a session",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/sessions/:session_id", "host": ["{{baseUrl}}"], "path": ["sessions", ":session_id"], "variable": [{ "key": "session_id", "value": "" }] },
+            "description": "Retrieves a single exploratory test session with result statistics of its notes."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Milestones",
+      "item": [
+        {
+          "name": "List milestones for a project",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/projects/:project_id/milestones", "host": ["{{baseUrl}}"], "path": ["projects", ":project_id", "milestones"], "variable": [{ "key": "project_id", "value": "" }] },
+            "description": "Lists all milestones of a project, optionally with linked run and session statistics."
+          }
+        },
+        {
+          "name": "Get a milestone",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/milestones/:milestone_id", "host": ["{{baseUrl}}"], "path": ["milestones", ":milestone_id"], "variable": [{ "key": "milestone_id", "value": "" }] },
+            "description": "Retrieves a single milestone, optionally including linked run and session statistics."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Test Case Management (Beta)",
+      "item": [
+        {
+          "name": "List cases",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/projects/:project_id/cases?folder_id=&template_id=",
+              "host": ["{{baseUrl}}"],
+              "path": ["projects", ":project_id", "cases"],
+              "query": [
+                { "key": "folder_id", "value": "" },
+                { "key": "template_id", "value": "" }
+              ],
+              "variable": [{ "key": "project_id", "value": "" }]
+            },
+            "description": "Lists the test cases of a project with filtering and pagination. Beta."
+          }
+        },
+        {
+          "name": "Create cases (bulk)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"cases\": []\n}" },
+            "url": { "raw": "{{baseUrl}}/projects/:project_id/cases", "host": ["{{baseUrl}}"], "path": ["projects", ":project_id", "cases"], "variable": [{ "key": "project_id", "value": "" }] },
+            "description": "Creates test cases in bulk (up to 100 per request). Beta."
+          }
+        },
+        {
+          "name": "Update cases (bulk)",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"cases\": []\n}" },
+            "url": { "raw": "{{baseUrl}}/projects/:project_id/cases", "host": ["{{baseUrl}}"], "path": ["projects", ":project_id", "cases"], "variable": [{ "key": "project_id", "value": "" }] },
+            "description": "Updates test cases in bulk (up to 100 per request). Beta."
+          }
+        },
+        {
+          "name": "Delete cases (bulk)",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"ids\": []\n}" },
+            "url": { "raw": "{{baseUrl}}/projects/:project_id/cases", "host": ["{{baseUrl}}"], "path": ["projects", ":project_id", "cases"], "variable": [{ "key": "project_id", "value": "" }] },
+            "description": "Deletes test cases in bulk by ID array (up to 100). Beta."
+          }
+        },
+        {
+          "name": "List folders",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/folders?parent_id=",
+              "host": ["{{baseUrl}}"],
+              "path": ["folders"],
+              "query": [{ "key": "parent_id", "value": "" }]
+            },
+            "description": "Lists case folders with filtering by parent ID or name. Beta."
+          }
+        },
+        {
+          "name": "List case attachments",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/cases/:case_id/attachments", "host": ["{{baseUrl}}"], "path": ["cases", ":case_id", "attachments"], "variable": [{ "key": "case_id", "value": "" }] },
+            "description": "Retrieves the attachment details for a case. Beta."
+          }
+        }
+      ]
+    }
+  ]
+}

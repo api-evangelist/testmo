@@ -1,0 +1,110 @@
+aid: testmo
+name: Testmo
+review:
+  question: Does Testmo expose a documented public WebSocket API?
+  answer: false
+  date: '2026-07-11'
+  reviewer: API Evangelist
+  asyncapiSpecCreated: false
+  asyncapiScopeNote: |
+    No AsyncAPI document was authored. Testmo's public API is a per-instance REST
+    API (https://{instance}.testmo.net/api/v1) that is request/response over
+    HTTPS - there is no server-push transport (WebSocket or SSE) on Testmo's API
+    to model. Automation results flow INTO Testmo via the Testmo CLI
+    (automation:run:submit) parsing JUnit-style XML in CI, and data flows OUT via
+    the read REST endpoints; neither is a streaming transport. There is nothing
+    event-driven to describe with AsyncAPI.
+findings:
+  summary: |
+    Testmo does not publish a documented public WebSocket API. Testmo is a
+    unified test management SaaS (manual, automation, exploratory). Its public
+    API is a per-instance REST API at https://{instance}.testmo.net/api/v1,
+    authenticated with a personal API token passed as
+    `Authorization: Bearer <token>`. The core API is read-only (GET) over
+    projects, manual test runs and their results, automation runs, automation
+    sources, exploratory sessions, and milestones - built for analytics,
+    reporting, and integrations. A separate beta test case management API adds
+    create/update/delete for cases, folders, and attachments. All list endpoints
+    are paginated (page, per_page). No realtime, bidirectional, or streaming
+    WebSocket (ws:// or wss://) endpoint is documented anywhere in Testmo's API
+    docs or blog posts.
+  accessModel: |
+    Testmo is a commercial hosted product (paid plans from 99 USD/month after a
+    free trial; no free-forever tier). The API is included with a paid instance,
+    is not a public sign-up-and-call API, and is scoped to the token user's
+    permissions (some endpoints are admin-only). Writing automation results is
+    done with the Testmo CLI (@testmo/testmo-cli) from CI/CD, not via a documented
+    public REST create-run endpoint.
+  transports:
+    - protocol: REST
+      scheme: https
+      baseURL: https://{instance}.testmo.net/api/v1
+      documented: true
+      note: Per-instance REST API. Read endpoints for runs, results, automation runs, sources, sessions, milestones, projects; beta write endpoints for cases/folders/attachments.
+    - protocol: CLI
+      scheme: https
+      documented: true
+      note: Testmo CLI (automation:run:submit) parses JUnit-style XML and posts automation results into Testmo from CI/CD. Ingestion tool, not a public streaming transport.
+    - protocol: WebSocket
+      scheme: wss
+      documented: false
+      note: No WebSocket endpoint is documented anywhere in Testmo's REST API docs or product blog as of the review date.
+  endpointsConfirmedRest:
+    - GET  https://{instance}.testmo.net/api/v1/projects
+    - GET  https://{instance}.testmo.net/api/v1/projects/{id}
+    - GET  https://{instance}.testmo.net/api/v1/runs/{id}
+    - GET  https://{instance}.testmo.net/api/v1/projects/{id}/runs
+    - GET  https://{instance}.testmo.net/api/v1/runs/{run_id}/results
+    - GET  https://{instance}.testmo.net/api/v1/automation/runs/{id}
+    - GET  https://{instance}.testmo.net/api/v1/projects/{id}/automation/runs
+    - GET  https://{instance}.testmo.net/api/v1/automation/sources/{id}
+    - GET  https://{instance}.testmo.net/api/v1/projects/{id}/automation/sources
+    - GET  https://{instance}.testmo.net/api/v1/sessions/{id}
+    - GET  https://{instance}.testmo.net/api/v1/projects/{id}/sessions
+    - GET  https://{instance}.testmo.net/api/v1/milestones/{id}
+    - GET  https://{instance}.testmo.net/api/v1/projects/{id}/milestones
+    - GET  https://{instance}.testmo.net/api/v1/projects/{id}/cases
+    - POST https://{instance}.testmo.net/api/v1/projects/{id}/cases
+    - PATCH https://{instance}.testmo.net/api/v1/projects/{id}/cases
+    - DELETE https://{instance}.testmo.net/api/v1/projects/{id}/cases
+    - GET  https://{instance}.testmo.net/api/v1/folders
+    - POST https://{instance}.testmo.net/api/v1/folders
+    - PATCH https://{instance}.testmo.net/api/v1/folders
+    - DELETE https://{instance}.testmo.net/api/v1/folders
+    - GET  https://{instance}.testmo.net/api/v1/cases/{id}/attachments
+    - POST https://{instance}.testmo.net/api/v1/cases/{id}/attachments
+    - DELETE https://{instance}.testmo.net/api/v1/attachments
+  endpointsModeled:
+    - note: Request and response schemas in openapi/testmo-openapi.yml are illustrative. Endpoint paths, Bearer auth, and pagination are grounded in Testmo docs/blog; field-level schemas should be verified against the live docs and your instance.
+    - note: Test case management endpoints (cases, folders, attachments) are in beta per Testmo and may change.
+sources:
+  - url: https://docs.testmo.com/api
+    type: Documentation
+    note: Testmo REST API home (redirects to Testmo help center). Lists REST base and endpoint groups; no WebSocket mentioned.
+  - url: https://www.testmo.com/blog/api-update-analytics/
+    type: APIReference
+    note: Documents base URL https://<name>.testmo.net/api/v1, Bearer API-token auth, pagination (page/per_page, prev/next/last_page), and the projects/runs/sessions/automation runs/automation sources/milestones read endpoints.
+  - url: https://www.testmo.com/blog/announcing-the-new-runs-results-api-in-testmo/
+    type: APIReference
+    note: Runs Results API - GET /runs/{id}/results with status_id, created_by, created_after/before filters and expands. All HTTPS REST.
+  - url: https://www.testmo.com/blog/announcing-test-case-management-apis-in-testmo/
+    type: APIReference
+    note: Beta test case management - GET/POST/PATCH/DELETE for cases and folders (bulk up to 100) and case attachments (up to 20). REST only.
+  - url: https://docs.testmo.com/docs/automation/testmo-cli
+    type: Documentation
+    note: Testmo CLI (@testmo/testmo-cli) automation:run:submit posts results from CI. Ingestion tool over HTTPS, not a WebSocket.
+  - url: https://www.testmo.com/pricing/
+    type: Pricing
+    note: Team 99 USD/mo (10 users), Business 399 USD/mo (1-25 users), Enterprise 599 USD/mo per 25-user tier; 15% annual discount; free trial, no free-forever plan.
+actions:
+  asyncapiPath: null
+  apisYmlUpdated: true
+  reason: |
+    No WebSocket protocol surface exists. Testmo's public API is
+    request/response REST over HTTPS (per-instance), with a CLI for pushing
+    automation results into Testmo from CI. No AsyncAPI document was created
+    because there is no server-push or streaming transport on Testmo's own API to
+    model.
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com

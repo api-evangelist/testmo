@@ -1,0 +1,18 @@
+generated: '2026-07-11'
+method: derived
+source: openapi/testmo-openapi.yml
+summary:
+  types:
+  - http
+schemes:
+- name: bearerAuth
+  type: http
+  scheme: bearer
+  description: 'Personal API token generated from your Testmo profile page, passed as `Authorization:
+    Bearer <token>`. The API is per-instance at https://{instance}.testmo.net/api/v1 and access
+    is scoped to the token user''s permissions; some endpoints (users, groups, roles) are admin-only.'
+  sources:
+  - openapi/testmo-openapi.yml
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com

@@ -1,0 +1,134 @@
+specification: API Commons Plans
+specificationVersion: '0.1'
+schema: https://raw.githubusercontent.com/api-evangelist/interface-research/main/schema/api-commons.yml#/$defs/Plans
+provider: Testmo
+providerId: testmo
+created: '2026-07-11'
+modified: '2026-07-11'
+reconciled: false
+tags:
+- Test Runs
+- Test Management
+- Test Automation
+- QA
+- Plans
+description: >-
+  Testmo is a commercial, hosted SaaS product with three flat-rate plans and a
+  free trial (no free-forever plan). Team is 99 USD/month and includes up to 10
+  users. Business is 399 USD/month and includes 1-25 users in the base price,
+  scaling as you add users. Enterprise is 599 USD/month per 25-user tier, scaling
+  with user tiers up to 200+. Annual billing saves 15 percent off the monthly
+  rates. The REST API is included with every paid instance - there is no separate
+  API fee or metered API charge - and access is scoped to the API token's user
+  permissions. Prices confirmed from the Testmo pricing page on the created date.
+notes: >-
+  User counts on Business and Enterprise are billed in tiers/increments of 25
+  based on users marked as activated during a month. Verify current numbers on
+  https://www.testmo.com/pricing/ and the Testmo price list during
+  reconciliation; enterprise tiers scale beyond the listed base.
+sources:
+- https://www.testmo.com/pricing/
+- https://support.testmo.com/hc/en-us/articles/38052332936077-Testmo-Price-List
+- https://support.testmo.com/hc/en-us/articles/38043302983949-Plans-Users
+plans:
+- id: testmo-team
+  name: Team
+  type: paid
+  description: >-
+    Flat-rate plan for small teams including up to 10 users, with unlimited
+    projects, test cases, plans, runs, milestones, results, automation results,
+    integrations (Jira, GitHub, GitLab, Linear, CI, automation), Testmo AI, and
+    full REST API access.
+  entries:
+  - label: Team Subscription
+    name: team_subscription
+    type: flat
+    metric: subscription
+    limit: 10
+    timeFrame: month
+    geo: global
+    unit: 1
+    price: 99.00 USD/month (up to 10 users; 15% off annual)
+    userMultiplied: false
+  elements:
+  - name: Up to 10 Users
+  - name: Unlimited Projects, Cases, Runs, Milestones
+  - name: Test Automation Results
+  - name: Integrations (Jira, GitHub, GitLab, Linear, CI)
+  - name: Testmo AI
+  - name: REST API Access
+- id: testmo-business
+  name: Business
+  type: paid
+  description: >-
+    Flat-rate plan including 1-25 users in the base price, adding more as needed.
+    Everything in Team, plus the Reporting Center, customizable role-based
+    access, and project admins.
+  entries:
+  - label: Business Subscription
+    name: business_subscription
+    type: flat
+    metric: subscription
+    limit: 25
+    timeFrame: month
+    geo: global
+    unit: 25
+    price: 399.00 USD/month (1-25 users; add users in tiers of 25; 15% off annual)
+    userMultiplied: false
+  elements:
+  - name: 1-25 Users Included
+  - name: Everything in Team
+  - name: Reporting Center
+  - name: Role-Based Access
+  - name: Project Admins
+  - name: REST API Access
+- id: testmo-enterprise
+  name: Enterprise
+  type: paid
+  description: >-
+    Flat-rate plan priced per 25-user tier, scaling with user tiers up to 200+.
+    Everything in Business, plus SSO (Google, Microsoft, Okta, OneLogin, SAML),
+    enforced two-factor authentication, a complete user audit log, and
+    automation launching.
+  entries:
+  - label: Enterprise Subscription
+    name: enterprise_subscription
+    type: flat
+    metric: subscription
+    limit: 25
+    timeFrame: month
+    geo: global
+    unit: 25
+    price: 599.00 USD/month per 25-user tier (scales to 200+; 15% off annual)
+    userMultiplied: false
+  elements:
+  - name: Per 25-User Tier
+  - name: Everything in Business
+  - name: SSO (Google, Microsoft, Okta, OneLogin, SAML)
+  - name: Enforced Two-Factor Authentication
+  - name: User Audit Log
+  - name: Automation Launching
+- id: testmo-trial
+  name: Free Trial
+  type: trial
+  description: >-
+    Time-limited free trial of Testmo for evaluation. There is no free-forever
+    plan; after the trial a paid plan is required to keep using the product and
+    its API.
+  entries:
+  - label: Trial
+    name: trial
+    type: free
+    metric: subscription
+    limit: -1
+    timeFrame: month
+    geo: global
+    unit: 1
+    price: free during trial period
+    userMultiplied: false
+  elements:
+  - name: Full Product Evaluation
+  - name: REST API Access
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com

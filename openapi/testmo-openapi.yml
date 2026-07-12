@@ -1,0 +1,1010 @@
+openapi: 3.0.3
+info:
+  title: Testmo REST API
+  description: >-
+    The Testmo REST API provides read access to the major entities of a Testmo
+    unified test management instance - projects, manual test runs and their
+    results, automation runs, automation sources, exploratory sessions, and
+    milestones - so teams can build custom analytics, reporting, and
+    integrations. A beta test case management surface (cases, folders,
+    attachments) adds create/update/delete operations. The API is per-instance:
+    the base URL is https://{instance}.testmo.net/api/v1, where {instance} is
+    your own Testmo subdomain. All requests authenticate with a personal API
+    token generated from your Testmo profile page, passed as
+    `Authorization: Bearer <token>`. List endpoints support common pagination
+    (page, per_page), sorting (sort, order), and filtering parameters.
+
+    NOTE: This document is modeled from Testmo's public documentation and blog
+    posts (docs.testmo.com and testmo.com/blog). Endpoint paths, authentication,
+    and pagination are grounded in those sources; request and response schemas
+    are illustrative and should be verified against the live docs and your
+    instance. Endpoints under the /projects/{project_id}/cases and /folders
+    paths are in beta and may change.
+  version: '1.0'
+  contact:
+    name: Testmo
+    url: https://www.testmo.com
+servers:
+  - url: https://{instance}.testmo.net/api/v1
+    description: Per-instance Testmo API base. Replace {instance} with your Testmo subdomain.
+    variables:
+      instance:
+        default: your-name
+        description: Your Testmo instance subdomain (e.g. your-name in your-name.testmo.net).
+security:
+  - bearerAuth: []
+tags:
+  - name: Projects
+    description: Top-level projects that contain runs, sessions, milestones, and cases.
+  - name: Test Runs
+    description: Manual test runs and their individual results.
+  - name: Automation Runs
+    description: Automation runs submitted from CI/CD, with aggregated statistics.
+  - name: Automation Sources
+    description: Automation sources grouping runs, with aggregated metrics.
+  - name: Sessions
+    description: Exploratory test sessions and session note statistics.
+  - name: Milestones
+    description: Milestones and their linked run and session statistics.
+  - name: Test Case Management
+    description: Beta read/write API for cases, folders, and attachments.
+paths:
+  /projects:
+    get:
+      operationId: listProjects
+      tags:
+        - Projects
+      summary: List projects
+      description: Lists all projects visible to the authenticated user.
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PerPage'
+      responses:
+        '200':
+          description: A paginated list of projects.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectList'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /projects/{project_id}:
+    parameters:
+      - $ref: '#/components/parameters/ProjectId'
+    get:
+      operationId: getProject
+      tags:
+        - Projects
+      summary: Get a project
+      description: Retrieves a single project by its ID.
+      responses:
+        '200':
+          description: The requested project.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /runs/{run_id}:
+    parameters:
+      - name: run_id
+        in: path
+        required: true
+        description: The ID of the test run.
+        schema:
+          type: integer
+    get:
+      operationId: getRun
+      tags:
+        - Test Runs
+      summary: Get a test run
+      description: Retrieves a single manual test run with aggregated statistics and test numbers.
+      responses:
+        '200':
+          description: The requested test run.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Run'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /projects/{project_id}/runs:
+    parameters:
+      - $ref: '#/components/parameters/ProjectId'
+    get:
+      operationId: listRuns
+      tags:
+        - Test Runs
+      summary: List test runs for a project
+      description: >-
+        Lists the manual test runs of a project. Returns active or closed runs
+        with aggregated statistics. Supports filtering (for example by
+        milestone, configuration, status, or start date).
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PerPage'
+        - name: milestone_id
+          in: query
+          required: false
+          description: Filter runs linked to a specific milestone.
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: A paginated list of test runs.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RunList'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /runs/{run_id}/results:
+    parameters:
+      - name: run_id
+        in: path
+        required: true
+        description: The ID of the test run.
+        schema:
+          type: integer
+    get:
+      operationId: listRunResults
+      tags:
+        - Test Runs
+      summary: List results for a test run
+      description: >-
+        Extracts and filters the individual test results of a manual test run.
+        Results can be filtered by status, creator, and creation date, and
+        related data can be expanded.
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PerPage'
+        - name: status_id
+          in: query
+          required: false
+          description: Filter results by status (for example Passed, Failed, Blocked).
+          schema:
+            type: integer
+        - name: created_by
+          in: query
+          required: false
+          description: Filter results by the ID of the user who created them.
+          schema:
+            type: integer
+        - name: created_after
+          in: query
+          required: false
+          description: Only results created after this timestamp.
+          schema:
+            type: string
+            format: date-time
+        - name: created_before
+          in: query
+          required: false
+          description: Only results created before this timestamp.
+          schema:
+            type: string
+            format: date-time
+        - name: expands
+          in: query
+          required: false
+          description: Comma-separated related resources to expand (for example users,issues).
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A paginated list of test results.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResultList'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /automation/runs/{run_id}:
+    parameters:
+      - name: run_id
+        in: path
+        required: true
+        description: The ID of the automation run.
+        schema:
+          type: integer
+    get:
+      operationId: getAutomationRun
+      tags:
+        - Automation Runs
+      summary: Get an automation run
+      description: >-
+        Retrieves a single automation run, including aggregated statistics of
+        the test results and the overall run status.
+      responses:
+        '200':
+          description: The requested automation run.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AutomationRun'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /projects/{project_id}/automation/runs:
+    parameters:
+      - $ref: '#/components/parameters/ProjectId'
+    get:
+      operationId: listAutomationRuns
+      tags:
+        - Automation Runs
+      summary: List automation runs for a project
+      description: >-
+        Lists the automation runs of a project with aggregated result
+        statistics. Supports filters such as milestone, configuration, source,
+        status, and date.
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PerPage'
+        - name: source_id
+          in: query
+          required: false
+          description: Filter automation runs by automation source.
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: A paginated list of automation runs.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AutomationRunList'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /automation/sources/{source_id}:
+    parameters:
+      - name: source_id
+        in: path
+        required: true
+        description: The ID of the automation source.
+        schema:
+          type: integer
+    get:
+      operationId: getAutomationSource
+      tags:
+        - Automation Sources
+      summary: Get an automation source
+      description: Retrieves a single automation source with aggregated statistics and metrics.
+      responses:
+        '200':
+          description: The requested automation source.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AutomationSource'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /projects/{project_id}/automation/sources:
+    parameters:
+      - $ref: '#/components/parameters/ProjectId'
+    get:
+      operationId: listAutomationSources
+      tags:
+        - Automation Sources
+      summary: List automation sources for a project
+      description: >-
+        Lists the automation sources of a project, including average and
+        aggregated source statistics and metrics.
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PerPage'
+      responses:
+        '200':
+          description: A paginated list of automation sources.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AutomationSourceList'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /sessions/{session_id}:
+    parameters:
+      - name: session_id
+        in: path
+        required: true
+        description: The ID of the exploratory session.
+        schema:
+          type: integer
+    get:
+      operationId: getSession
+      tags:
+        - Sessions
+      summary: Get a session
+      description: Retrieves a single exploratory test session with result statistics of its notes.
+      responses:
+        '200':
+          description: The requested session.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Session'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /projects/{project_id}/sessions:
+    parameters:
+      - $ref: '#/components/parameters/ProjectId'
+    get:
+      operationId: listSessions
+      tags:
+        - Sessions
+      summary: List sessions for a project
+      description: Lists active or closed exploratory sessions of a project with result statistics.
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PerPage'
+      responses:
+        '200':
+          description: A paginated list of sessions.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionList'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /milestones/{milestone_id}:
+    parameters:
+      - name: milestone_id
+        in: path
+        required: true
+        description: The ID of the milestone.
+        schema:
+          type: integer
+    get:
+      operationId: getMilestone
+      tags:
+        - Milestones
+      summary: Get a milestone
+      description: >-
+        Retrieves a single milestone, optionally including statistics for the
+        linked test runs and sessions.
+      responses:
+        '200':
+          description: The requested milestone.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Milestone'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /projects/{project_id}/milestones:
+    parameters:
+      - $ref: '#/components/parameters/ProjectId'
+    get:
+      operationId: listMilestones
+      tags:
+        - Milestones
+      summary: List milestones for a project
+      description: Lists all milestones of a project, optionally including linked run and session statistics.
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PerPage'
+      responses:
+        '200':
+          description: A paginated list of milestones.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MilestoneList'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /projects/{project_id}/cases:
+    parameters:
+      - $ref: '#/components/parameters/ProjectId'
+    get:
+      operationId: listCases
+      tags:
+        - Test Case Management
+      summary: List cases (beta)
+      description: >-
+        Lists the test cases of a project with filtering (folder, template,
+        date range) and pagination. Beta endpoint.
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PerPage'
+        - name: folder_id
+          in: query
+          required: false
+          description: Filter cases by folder.
+          schema:
+            type: integer
+        - name: template_id
+          in: query
+          required: false
+          description: Filter cases by template.
+          schema:
+            type: integer
+        - name: expands
+          in: query
+          required: false
+          description: Comma-separated related resources to expand (for example automation_links).
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A paginated list of cases.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CaseList'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    post:
+      operationId: createCases
+      tags:
+        - Test Case Management
+      summary: Create cases (beta)
+      description: Creates test cases in bulk (up to 100 per request). Beta endpoint.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CaseBulkInput'
+      responses:
+        '200':
+          description: The created cases.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CaseList'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+    patch:
+      operationId: updateCases
+      tags:
+        - Test Case Management
+      summary: Update cases (beta)
+      description: Updates test cases in bulk (up to 100 per request). Beta endpoint.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CaseBulkInput'
+      responses:
+        '200':
+          description: The updated cases.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CaseList'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+    delete:
+      operationId: deleteCases
+      tags:
+        - Test Case Management
+      summary: Delete cases (beta)
+      description: Deletes test cases in bulk by ID array (up to 100). Beta endpoint.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IdArray'
+      responses:
+        '200':
+          description: Deletion confirmation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /folders:
+    get:
+      operationId: listFolders
+      tags:
+        - Test Case Management
+      summary: List folders (beta)
+      description: Lists case folders with filtering by parent ID or name. Beta endpoint.
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PerPage'
+        - name: parent_id
+          in: query
+          required: false
+          description: Filter folders by parent folder.
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: A paginated list of folders.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FolderList'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    post:
+      operationId: createFolders
+      tags:
+        - Test Case Management
+      summary: Create folders (beta)
+      description: Creates case folders in bulk (up to 100). Beta endpoint.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FolderBulkInput'
+      responses:
+        '200':
+          description: The created folders.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FolderList'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+    patch:
+      operationId: updateFolders
+      tags:
+        - Test Case Management
+      summary: Update folders (beta)
+      description: Updates case folders in bulk (up to 100). Beta endpoint.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FolderBulkInput'
+      responses:
+        '200':
+          description: The updated folders.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FolderList'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+    delete:
+      operationId: deleteFolders
+      tags:
+        - Test Case Management
+      summary: Delete folders (beta)
+      description: Deletes case folders in bulk by ID array (up to 100). Beta endpoint.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IdArray'
+      responses:
+        '200':
+          description: Deletion confirmation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /cases/{case_id}/attachments:
+    parameters:
+      - name: case_id
+        in: path
+        required: true
+        description: The ID of the case.
+        schema:
+          type: integer
+    get:
+      operationId: listCaseAttachments
+      tags:
+        - Test Case Management
+      summary: List case attachments (beta)
+      description: Retrieves the attachment details for a case. Beta endpoint.
+      responses:
+        '200':
+          description: A list of attachments.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AttachmentList'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    post:
+      operationId: uploadCaseAttachments
+      tags:
+        - Test Case Management
+      summary: Upload case attachments (beta)
+      description: Uploads attachments to a case in bulk (up to 20). Beta endpoint.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                files:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+      responses:
+        '200':
+          description: The uploaded attachments.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AttachmentList'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: >-
+        Personal API token generated from your Testmo profile page, passed as
+        `Authorization: Bearer <token>`.
+  parameters:
+    ProjectId:
+      name: project_id
+      in: path
+      required: true
+      description: The ID of the project.
+      schema:
+        type: integer
+    Page:
+      name: page
+      in: query
+      required: false
+      description: The page of results to retrieve.
+      schema:
+        type: integer
+        default: 1
+    PerPage:
+      name: per_page
+      in: query
+      required: false
+      description: The number of entries per page.
+      schema:
+        type: integer
+        default: 100
+  responses:
+    Unauthorized:
+      description: Missing or invalid API token.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: The requested resource was not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    ValidationError:
+      description: The request payload failed validation.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  schemas:
+    Error:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+            message:
+              type: string
+    Pagination:
+      type: object
+      properties:
+        page:
+          type: integer
+        per_page:
+          type: integer
+        prev_page:
+          type: integer
+          nullable: true
+        next_page:
+          type: integer
+          nullable: true
+        last_page:
+          type: integer
+    DeleteResponse:
+      type: object
+      properties:
+        deleted:
+          type: boolean
+        count:
+          type: integer
+    IdArray:
+      type: object
+      required:
+        - ids
+      properties:
+        ids:
+          type: array
+          items:
+            type: integer
+    Project:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        is_completed:
+          type: boolean
+    ProjectList:
+      type: object
+      properties:
+        result:
+          type: array
+          items:
+            $ref: '#/components/schemas/Project'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+    Run:
+      type: object
+      properties:
+        id:
+          type: integer
+        project_id:
+          type: integer
+        name:
+          type: string
+        is_closed:
+          type: boolean
+        milestone_id:
+          type: integer
+          nullable: true
+        result_summary:
+          type: object
+          additionalProperties: true
+    RunList:
+      type: object
+      properties:
+        result:
+          type: array
+          items:
+            $ref: '#/components/schemas/Run'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+    Result:
+      type: object
+      properties:
+        id:
+          type: integer
+        run_id:
+          type: integer
+        test_id:
+          type: integer
+        status_id:
+          type: integer
+        created_by:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+    ResultList:
+      type: object
+      properties:
+        result:
+          type: array
+          items:
+            $ref: '#/components/schemas/Result'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+    AutomationRun:
+      type: object
+      properties:
+        id:
+          type: integer
+        project_id:
+          type: integer
+        name:
+          type: string
+        source_id:
+          type: integer
+        status:
+          type: string
+        result_summary:
+          type: object
+          additionalProperties: true
+    AutomationRunList:
+      type: object
+      properties:
+        result:
+          type: array
+          items:
+            $ref: '#/components/schemas/AutomationRun'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+    AutomationSource:
+      type: object
+      properties:
+        id:
+          type: integer
+        project_id:
+          type: integer
+        name:
+          type: string
+        statistics:
+          type: object
+          additionalProperties: true
+    AutomationSourceList:
+      type: object
+      properties:
+        result:
+          type: array
+          items:
+            $ref: '#/components/schemas/AutomationSource'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+    Session:
+      type: object
+      properties:
+        id:
+          type: integer
+        project_id:
+          type: integer
+        name:
+          type: string
+        is_closed:
+          type: boolean
+        result_summary:
+          type: object
+          additionalProperties: true
+    SessionList:
+      type: object
+      properties:
+        result:
+          type: array
+          items:
+            $ref: '#/components/schemas/Session'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+    Milestone:
+      type: object
+      properties:
+        id:
+          type: integer
+        project_id:
+          type: integer
+        name:
+          type: string
+        is_completed:
+          type: boolean
+        statistics:
+          type: object
+          additionalProperties: true
+    MilestoneList:
+      type: object
+      properties:
+        result:
+          type: array
+          items:
+            $ref: '#/components/schemas/Milestone'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+    Case:
+      type: object
+      properties:
+        id:
+          type: integer
+        project_id:
+          type: integer
+        folder_id:
+          type: integer
+          nullable: true
+        template_id:
+          type: integer
+          nullable: true
+        name:
+          type: string
+    CaseList:
+      type: object
+      properties:
+        result:
+          type: array
+          items:
+            $ref: '#/components/schemas/Case'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+    CaseBulkInput:
+      type: object
+      required:
+        - cases
+      properties:
+        cases:
+          type: array
+          maxItems: 100
+          items:
+            $ref: '#/components/schemas/Case'
+    Folder:
+      type: object
+      properties:
+        id:
+          type: integer
+        parent_id:
+          type: integer
+          nullable: true
+        name:
+          type: string
+    FolderList:
+      type: object
+      properties:
+        result:
+          type: array
+          items:
+            $ref: '#/components/schemas/Folder'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+    FolderBulkInput:
+      type: object
+      required:
+        - folders
+      properties:
+        folders:
+          type: array
+          maxItems: 100
+          items:
+            $ref: '#/components/schemas/Folder'
+    Attachment:
+      type: object
+      properties:
+        id:
+          type: integer
+        case_id:
+          type: integer
+        filename:
+          type: string
+        size:
+          type: integer
+    AttachmentList:
+      type: object
+      properties:
+        result:
+          type: array
+          items:
+            $ref: '#/components/schemas/Attachment'
+        pagination:
+          $ref: '#/components/schemas/Pagination'

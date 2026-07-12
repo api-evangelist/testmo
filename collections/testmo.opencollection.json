@@ -1,0 +1,256 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Testmo REST API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{apiToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": { "name": "Projects", "type": "folder" },
+      "items": [
+        {
+          "info": { "name": "List projects.", "type": "http" },
+          "http": { "method": "GET", "url": "https://{{instance}}.testmo.net/api/v1/projects" },
+          "docs": "Lists all projects visible to the authenticated user."
+        },
+        {
+          "info": { "name": "Get a project.", "type": "http" },
+          "http": {
+            "method": "GET",
+            "url": "https://{{instance}}.testmo.net/api/v1/projects/:project_id",
+            "params": [
+              { "name": "project_id", "value": "", "type": "path", "description": "The ID of the project." }
+            ]
+          },
+          "docs": "Retrieves a single project by its ID."
+        }
+      ]
+    },
+    {
+      "info": { "name": "Test Runs", "type": "folder" },
+      "items": [
+        {
+          "info": { "name": "List test runs for a project.", "type": "http" },
+          "http": {
+            "method": "GET",
+            "url": "https://{{instance}}.testmo.net/api/v1/projects/:project_id/runs",
+            "params": [
+              { "name": "project_id", "value": "", "type": "path", "description": "The ID of the project." }
+            ]
+          },
+          "docs": "Lists the manual test runs of a project with aggregated statistics; supports filters."
+        },
+        {
+          "info": { "name": "Get a test run.", "type": "http" },
+          "http": {
+            "method": "GET",
+            "url": "https://{{instance}}.testmo.net/api/v1/runs/:run_id",
+            "params": [
+              { "name": "run_id", "value": "", "type": "path", "description": "The ID of the test run." }
+            ]
+          },
+          "docs": "Retrieves a single manual test run with aggregated statistics and test numbers."
+        },
+        {
+          "info": { "name": "List results for a test run.", "type": "http" },
+          "http": {
+            "method": "GET",
+            "url": "https://{{instance}}.testmo.net/api/v1/runs/:run_id/results?status_id=&created_by=&expands=users,issues",
+            "params": [
+              { "name": "run_id", "value": "", "type": "path", "description": "The ID of the test run." },
+              { "name": "status_id", "value": "", "type": "query", "description": "Filter by status (Passed, Failed, Blocked)." },
+              { "name": "created_by", "value": "", "type": "query", "description": "Filter by creator user ID." },
+              { "name": "expands", "value": "users,issues", "type": "query", "description": "Related resources to expand." }
+            ]
+          },
+          "docs": "Extracts and filters the individual test results of a manual test run."
+        }
+      ]
+    },
+    {
+      "info": { "name": "Automation Runs", "type": "folder" },
+      "items": [
+        {
+          "info": { "name": "List automation runs for a project.", "type": "http" },
+          "http": {
+            "method": "GET",
+            "url": "https://{{instance}}.testmo.net/api/v1/projects/:project_id/automation/runs",
+            "params": [
+              { "name": "project_id", "value": "", "type": "path", "description": "The ID of the project." }
+            ]
+          },
+          "docs": "Lists the automation runs of a project with aggregated result statistics."
+        },
+        {
+          "info": { "name": "Get an automation run.", "type": "http" },
+          "http": {
+            "method": "GET",
+            "url": "https://{{instance}}.testmo.net/api/v1/automation/runs/:run_id",
+            "params": [
+              { "name": "run_id", "value": "", "type": "path", "description": "The ID of the automation run." }
+            ]
+          },
+          "docs": "Retrieves a single automation run, including aggregated statistics and overall status."
+        }
+      ]
+    },
+    {
+      "info": { "name": "Automation Sources", "type": "folder" },
+      "items": [
+        {
+          "info": { "name": "List automation sources for a project.", "type": "http" },
+          "http": {
+            "method": "GET",
+            "url": "https://{{instance}}.testmo.net/api/v1/projects/:project_id/automation/sources",
+            "params": [
+              { "name": "project_id", "value": "", "type": "path", "description": "The ID of the project." }
+            ]
+          },
+          "docs": "Lists the automation sources of a project with average and aggregated metrics."
+        },
+        {
+          "info": { "name": "Get an automation source.", "type": "http" },
+          "http": {
+            "method": "GET",
+            "url": "https://{{instance}}.testmo.net/api/v1/automation/sources/:source_id",
+            "params": [
+              { "name": "source_id", "value": "", "type": "path", "description": "The ID of the automation source." }
+            ]
+          },
+          "docs": "Retrieves a single automation source with aggregated statistics and metrics."
+        }
+      ]
+    },
+    {
+      "info": { "name": "Sessions", "type": "folder" },
+      "items": [
+        {
+          "info": { "name": "List sessions for a project.", "type": "http" },
+          "http": {
+            "method": "GET",
+            "url": "https://{{instance}}.testmo.net/api/v1/projects/:project_id/sessions",
+            "params": [
+              { "name": "project_id", "value": "", "type": "path", "description": "The ID of the project." }
+            ]
+          },
+          "docs": "Lists active or closed exploratory sessions of a project with result statistics."
+        },
+        {
+          "info": { "name": "Get a session.", "type": "http" },
+          "http": {
+            "method": "GET",
+            "url": "https://{{instance}}.testmo.net/api/v1/sessions/:session_id",
+            "params": [
+              { "name": "session_id", "value": "", "type": "path", "description": "The ID of the exploratory session." }
+            ]
+          },
+          "docs": "Retrieves a single exploratory test session with result statistics of its notes."
+        }
+      ]
+    },
+    {
+      "info": { "name": "Milestones", "type": "folder" },
+      "items": [
+        {
+          "info": { "name": "List milestones for a project.", "type": "http" },
+          "http": {
+            "method": "GET",
+            "url": "https://{{instance}}.testmo.net/api/v1/projects/:project_id/milestones",
+            "params": [
+              { "name": "project_id", "value": "", "type": "path", "description": "The ID of the project." }
+            ]
+          },
+          "docs": "Lists all milestones of a project, optionally with linked run and session statistics."
+        },
+        {
+          "info": { "name": "Get a milestone.", "type": "http" },
+          "http": {
+            "method": "GET",
+            "url": "https://{{instance}}.testmo.net/api/v1/milestones/:milestone_id",
+            "params": [
+              { "name": "milestone_id", "value": "", "type": "path", "description": "The ID of the milestone." }
+            ]
+          },
+          "docs": "Retrieves a single milestone, optionally including linked run and session statistics."
+        }
+      ]
+    },
+    {
+      "info": { "name": "Test Case Management (Beta)", "type": "folder" },
+      "items": [
+        {
+          "info": { "name": "List cases.", "type": "http" },
+          "http": {
+            "method": "GET",
+            "url": "https://{{instance}}.testmo.net/api/v1/projects/:project_id/cases?folder_id=&template_id=",
+            "params": [
+              { "name": "project_id", "value": "", "type": "path", "description": "The ID of the project." },
+              { "name": "folder_id", "value": "", "type": "query", "description": "Filter cases by folder." },
+              { "name": "template_id", "value": "", "type": "query", "description": "Filter cases by template." }
+            ]
+          },
+          "docs": "Lists the test cases of a project with filtering and pagination. Beta."
+        },
+        {
+          "info": { "name": "Create cases (bulk).", "type": "http" },
+          "http": {
+            "method": "POST",
+            "url": "https://{{instance}}.testmo.net/api/v1/projects/:project_id/cases",
+            "params": [
+              { "name": "project_id", "value": "", "type": "path", "description": "The ID of the project." }
+            ],
+            "body": { "type": "json", "data": "{\n  \"cases\": []\n}" }
+          },
+          "docs": "Creates test cases in bulk (up to 100 per request). Beta."
+        },
+        {
+          "info": { "name": "Update cases (bulk).", "type": "http" },
+          "http": {
+            "method": "PATCH",
+            "url": "https://{{instance}}.testmo.net/api/v1/projects/:project_id/cases",
+            "params": [
+              { "name": "project_id", "value": "", "type": "path", "description": "The ID of the project." }
+            ],
+            "body": { "type": "json", "data": "{\n  \"cases\": []\n}" }
+          },
+          "docs": "Updates test cases in bulk (up to 100 per request). Beta."
+        },
+        {
+          "info": { "name": "Delete cases (bulk).", "type": "http" },
+          "http": {
+            "method": "DELETE",
+            "url": "https://{{instance}}.testmo.net/api/v1/projects/:project_id/cases",
+            "params": [
+              { "name": "project_id", "value": "", "type": "path", "description": "The ID of the project." }
+            ],
+            "body": { "type": "json", "data": "{\n  \"ids\": []\n}" }
+          },
+          "docs": "Deletes test cases in bulk by ID array (up to 100). Beta."
+        },
+        {
+          "info": { "name": "List folders.", "type": "http" },
+          "http": { "method": "GET", "url": "https://{{instance}}.testmo.net/api/v1/folders?parent_id=" },
+          "docs": "Lists case folders with filtering by parent ID or name. Beta."
+        },
+        {
+          "info": { "name": "List case attachments.", "type": "http" },
+          "http": {
+            "method": "GET",
+            "url": "https://{{instance}}.testmo.net/api/v1/cases/:case_id/attachments",
+            "params": [
+              { "name": "case_id", "value": "", "type": "path", "description": "The ID of the case." }
+            ]
+          },
+          "docs": "Retrieves the attachment details for a case. Beta."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

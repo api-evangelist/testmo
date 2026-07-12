@@ -1,0 +1,198 @@
+aid: testmo
+url: https://raw.githubusercontent.com/api-evangelist/testmo/refs/heads/main/apis.yml
+name: Testmo
+kind: company
+description: Testmo is a unified test management platform that brings manual test cases,
+  test automation, and exploratory testing together in one tool, with reporting,
+  milestones, and issue-tracker and CI integrations. Testmo exposes a documented REST
+  API (per-instance base https://{instance}.testmo.net/api/v1, Bearer API-token auth)
+  that reads projects, test runs, run results, automation runs, automation sources,
+  exploratory sessions, and milestones for custom analytics, reporting, and
+  integrations - plus a beta test case management API and a CLI (@testmo/testmo-cli)
+  that submits automation results from CI/CD pipelines.
+image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+tags:
+- Test Runs
+- Test Management
+- Test Automation
+- QA
+- Exploratory Testing
+- CI/CD
+- Quality Assurance
+created: '2026-07-11'
+modified: '2026-07-11'
+specificationVersion: '0.19'
+apis:
+- aid: testmo:testmo-test-runs-api
+  name: Testmo Test Runs API
+  tags:
+  - Test Runs
+  - Test Management
+  - QA
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  humanURL: https://docs.testmo.com/api
+  baseURL: https://{instance}.testmo.net/api/v1
+  properties:
+  - url: https://docs.testmo.com/api
+    type: Documentation
+  - url: https://www.testmo.com/blog/announcing-the-new-runs-results-api-in-testmo/
+    type: APIReference
+  - url: openapi/testmo-openapi.yml
+    type: OpenAPI
+  - url: collections/testmo.postman_collection.json
+    type: PostmanCollection
+  - url: collections/testmo.opencollection.json
+    type: OpenCollection
+  description: Read a project's manual test runs and their individual results. Get a
+    single run or all active or closed runs with aggregated statistics and test
+    numbers, and extract or filter individual test results (by status, creator, and
+    date) from a run - the surface an apis.io "test runs" search is looking for.
+- aid: testmo:testmo-automation-runs-api
+  name: Testmo Automation Runs API
+  tags:
+  - Automation Runs
+  - Test Automation
+  - CI/CD
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  humanURL: https://docs.testmo.com/api
+  baseURL: https://{instance}.testmo.net/api/v1
+  properties:
+  - url: https://docs.testmo.com/api
+    type: Documentation
+  - url: https://www.testmo.com/blog/api-update-analytics/
+    type: APIReference
+  - url: openapi/testmo-openapi.yml
+    type: OpenAPI
+  - url: collections/testmo.postman_collection.json
+    type: PostmanCollection
+  - url: collections/testmo.opencollection.json
+    type: OpenCollection
+  description: Read one or all automation runs for a project, including aggregated
+    statistics of the test results and the overall run status. Automation runs are
+    typically created from CI/CD via the Testmo CLI (@testmo/testmo-cli) and read
+    back through this API for reporting and analytics.
+- aid: testmo:testmo-automation-sources-api
+  name: Testmo Automation Sources API
+  tags:
+  - Automation Sources
+  - Test Automation
+  - Metrics
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  humanURL: https://docs.testmo.com/api
+  baseURL: https://{instance}.testmo.net/api/v1
+  properties:
+  - url: https://docs.testmo.com/api
+    type: Documentation
+  - url: openapi/testmo-openapi.yml
+    type: OpenAPI
+  - url: collections/testmo.postman_collection.json
+    type: PostmanCollection
+  - url: collections/testmo.opencollection.json
+    type: OpenCollection
+  description: Query the test automation sources of a project, including average and
+    aggregated source statistics and metrics. Sources group automation runs (for
+    example "backend-unit" or "e2e") so trends can be tracked per pipeline over time.
+- aid: testmo:testmo-sessions-api
+  name: Testmo Sessions API
+  tags:
+  - Exploratory Testing
+  - Sessions
+  - QA
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  humanURL: https://docs.testmo.com/api
+  baseURL: https://{instance}.testmo.net/api/v1
+  properties:
+  - url: https://docs.testmo.com/api
+    type: Documentation
+  - url: openapi/testmo-openapi.yml
+    type: OpenAPI
+  - url: collections/testmo.postman_collection.json
+    type: PostmanCollection
+  - url: collections/testmo.opencollection.json
+    type: OpenCollection
+  description: Read the exploratory test sessions of a project. Get a single session
+    or all active or closed sessions, along with result statistics of the session
+    notes, for reporting on exploratory testing effort.
+- aid: testmo:testmo-projects-api
+  name: Testmo Projects API
+  tags:
+  - Projects
+  - Test Management
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  humanURL: https://docs.testmo.com/api
+  baseURL: https://{instance}.testmo.net/api/v1
+  properties:
+  - url: https://docs.testmo.com/api
+    type: Documentation
+  - url: openapi/testmo-openapi.yml
+    type: OpenAPI
+  - url: collections/testmo.postman_collection.json
+    type: PostmanCollection
+  - url: collections/testmo.opencollection.json
+    type: OpenCollection
+  description: List all projects and retrieve a single project. Projects are the
+    top-level container that runs, automation runs, sessions, milestones, and cases
+    belong to, so this endpoint anchors most other API calls.
+- aid: testmo:testmo-milestones-api
+  name: Testmo Milestones API
+  tags:
+  - Milestones
+  - Test Management
+  - Reporting
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  humanURL: https://docs.testmo.com/api
+  baseURL: https://{instance}.testmo.net/api/v1
+  properties:
+  - url: https://docs.testmo.com/api
+    type: Documentation
+  - url: openapi/testmo-openapi.yml
+    type: OpenAPI
+  - url: collections/testmo.postman_collection.json
+    type: PostmanCollection
+  - url: collections/testmo.opencollection.json
+    type: OpenCollection
+  description: Get one milestone or all milestones of a project, optionally including
+    milestone statistics for the linked test runs and sessions, to report progress
+    against a release or sprint.
+- aid: testmo:testmo-test-case-management-api
+  name: Testmo Test Case Management API
+  tags:
+  - Test Cases
+  - Test Management
+  - Beta
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  humanURL: https://www.testmo.com/blog/announcing-test-case-management-apis-in-testmo/
+  baseURL: https://{instance}.testmo.net/api/v1
+  properties:
+  - url: https://www.testmo.com/blog/announcing-test-case-management-apis-in-testmo/
+    type: Documentation
+  - url: openapi/testmo-openapi.yml
+    type: OpenAPI
+  - url: collections/testmo.postman_collection.json
+    type: PostmanCollection
+  - url: collections/testmo.opencollection.json
+    type: OpenCollection
+  description: Beta read/write API for the test case repository - list, create, update,
+    and delete cases and folders in bulk (up to 100 per request) and manage case
+    attachments. The only write surface in the Testmo API; endpoints are in beta and
+    may change.
+common:
+- type: Authentication
+  url: authentication/testmo-authentication.yml
+- type: LinkedIn
+  url: https://www.linkedin.com/company/testmo
+- type: Website
+  url: https://www.testmo.com/
+- type: Documentation
+  url: https://docs.testmo.com/
+- type: Plans
+  url: plans/testmo-plans-pricing.yml
+- type: RateLimits
+  url: rate-limits/testmo-rate-limits.yml
+- type: FinOps
+  url: finops/testmo-finops.yml
+- url: https://www.testmo.com/blog/
+  type: Blog
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com

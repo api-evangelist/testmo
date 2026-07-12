@@ -1,0 +1,71 @@
+specification: API Commons Rate Limits
+specificationVersion: '0.1'
+schema: https://raw.githubusercontent.com/api-evangelist/interface-research/main/schema/api-commons.yml#/$defs/RateLimits
+provider: Testmo
+providerId: testmo
+created: '2026-07-11'
+modified: '2026-07-11'
+reconciled: false
+tags:
+- Test Runs
+- Test Management
+- Rate Limiting
+- Quotas
+description: >-
+  Testmo does not publish fixed numeric per-minute rate limits for its REST API
+  in the public documentation reviewed. The API is per-instance
+  (https://{instance}.testmo.net/api/v1) and read-oriented, so throughput is
+  primarily governed by pagination rather than a documented request cap. All list
+  endpoints are paginated with page and per_page parameters (per_page defaults to
+  100), and responses include prev_page, next_page, and last_page so clients page
+  through large result sets rather than pulling everything at once. Bulk write
+  operations in the beta test case management API are capped by payload size -
+  up to 100 cases or folders per request, and up to 20 attachments per upload.
+notes: >-
+  No numeric per-account or per-endpoint request-rate limit is documented as of
+  the review date; treat any limits as unconfirmed and modeled. Clients should
+  page results, request only needed fields via expands, and implement backoff on
+  HTTP 429 if encountered. Verify against docs.testmo.com and your instance.
+sources:
+- https://docs.testmo.com/api
+- https://www.testmo.com/blog/api-update-analytics/
+- https://www.testmo.com/blog/announcing-the-new-runs-results-api-in-testmo/
+- https://www.testmo.com/blog/announcing-test-case-management-apis-in-testmo/
+responseCodes:
+  throttled: 429
+limits:
+- name: REST API Requests
+  scope: instance
+  metric: requests
+  limit: not published
+  notes: No fixed numeric request-rate limit is documented for the Testmo REST API.
+- name: List Pagination
+  scope: endpoint
+  metric: entries
+  limit: per_page (default 100)
+  notes: All list endpoints paginate with page and per_page; responses include prev_page, next_page, last_page.
+- name: Bulk Case Operations
+  scope: request
+  metric: cases
+  limit: 100 per request
+  notes: Beta test case management API creates, updates, and deletes cases in bulk up to 100 per request.
+- name: Bulk Folder Operations
+  scope: request
+  metric: folders
+  limit: 100 per request
+  notes: Beta test case management API creates, updates, and deletes folders in bulk up to 100 per request.
+- name: Attachment Upload
+  scope: request
+  metric: attachments
+  limit: 20 per request
+  notes: Beta test case management API uploads up to 20 attachments per bulk request.
+policies:
+- name: Pagination
+  description: Use page and per_page to page through results; follow next_page until it is null.
+- name: Field Expansion
+  description: Use the expands parameter to fetch related resources (for example users, issues, automation_links) in one request instead of many.
+- name: Backoff Strategy
+  description: Implement exponential backoff with jitter and honor Retry-After on any HTTP 429 responses.
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com

@@ -1,0 +1,87 @@
+specification: FinOps Framework
+specificationVersion: '1.0'
+schema: https://www.finops.org/framework/
+provider: Testmo
+providerId: testmo
+created: '2026-07-11'
+modified: '2026-07-11'
+reconciled: false
+tags:
+- Test Runs
+- Test Management
+- Test Automation
+- FinOps
+- Cost Management
+- FOCUS
+description: >-
+  FinOps view of Testmo spend. Testmo is a hosted SaaS test management product
+  billed as a flat monthly (or discounted annual) subscription per plan, driven
+  by user tiers rather than by API usage. Team is a fixed 99 USD/month up to 10
+  users; Business (399 USD/month) and Enterprise (599 USD/month) scale in tiers
+  of 25 activated users. The REST API is included with the subscription and is
+  not separately metered, so API consumption does not create incremental cost -
+  the primary cost lever is the number of activated users and the plan tier. Cost
+  optimization is therefore about right-sizing the plan and managing activated
+  seats, not about throttling API calls.
+notes: >-
+  Per-user effective cost varies widely with headcount because plans are flat per
+  tier; a small team on Business pays a high per-user rate while a full 25-user
+  tier pays much less. Verify current rates on the Testmo pricing page and price
+  list during reconciliation.
+sources:
+- https://www.testmo.com/pricing/
+- https://support.testmo.com/hc/en-us/articles/38052332936077-Testmo-Price-List
+- https://support.testmo.com/hc/en-us/articles/38043302983949-Plans-Users
+- https://focus.finops.org/focus-specification/v1-3/
+alignedWith:
+  framework: FinOps Foundation Framework
+  frameworkUrl: https://www.finops.org/framework/
+  dataSpec: FOCUS
+  dataSpecVersion: '1.3'
+  dataSpecUrl: https://focus.finops.org/focus-specification/v1-3/
+publisherName: Testmo
+serviceCategory: Software as a Service - Test Management
+billingModel:
+  pricingCategory: Subscription
+  billingFrequency: Monthly
+  billingCurrency: USD
+  chargeCategories:
+  - Purchase
+  - Usage
+  - Adjustment
+focusColumns:
+  ServiceName: Testmo
+  ServiceCategory: Developer Tools
+  ProviderName: Testmo
+  PublisherName: Testmo
+  InvoiceIssuerName: Testmo
+  BillingCurrency: USD
+  ChargeCategory: Purchase
+  PricingCategory: Subscription
+meters:
+- name: plan_subscription
+  description: Flat monthly or annual subscription fee for the selected Testmo plan tier.
+  unit: months
+  aggregation: sum
+  dimensions:
+  - account
+  - plan
+- name: activated_users
+  description: Number of users marked as activated during a month; drives Business and Enterprise tier pricing (increments of 25).
+  unit: users
+  aggregation: max
+  dimensions:
+  - account
+  - plan
+principles:
+- name: Visibility
+  description: Track the plan tier and count of activated users per month; the REST API itself is unmetered and adds no incremental charge.
+- name: Allocation
+  description: Map the single Testmo subscription and its activated seats to the QA/engineering teams that use it.
+- name: Optimization
+  description: Right-size the plan to actual activated users, deactivate unused seats before the monthly count, and choose annual billing for the 15 percent discount.
+- name: Accountability
+  description: Assign an owner for the Testmo subscription who reviews activated-user counts and tier thresholds each billing cycle.
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com
