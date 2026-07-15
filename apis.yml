@@ -177,6 +177,8 @@ apis:
     attachments. The only write surface in the Testmo API; endpoints are in beta and
     may change.
 common:
+- type: AgenticAccess
+  url: agentic-access/testmo-agentic-access.yml
 - type: Authentication
   url: authentication/testmo-authentication.yml
 - type: LinkedIn
