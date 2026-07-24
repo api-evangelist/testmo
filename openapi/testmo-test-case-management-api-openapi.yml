@@ -1,0 +1,451 @@
+openapi: 3.0.3
+info:
+  title: Testmo REST Automation Runs Test Case Management API
+  description: 'The Testmo REST API provides read access to the major entities of a Testmo unified test management instance - projects, manual test runs and their results, automation runs, automation sources, exploratory sessions, and milestones - so teams can build custom analytics, reporting, and integrations. A beta test case management surface (cases, folders, attachments) adds create/update/delete operations. The API is per-instance: the base URL is https://{instance}.testmo.net/api/v1, where {instance} is your own Testmo subdomain. All requests authenticate with a personal API token generated from your Testmo profile page, passed as `Authorization: Bearer <token>`. List endpoints support common pagination (page, per_page), sorting (sort, order), and filtering parameters.
+
+    NOTE: This document is modeled from Testmo''s public documentation and blog posts (docs.testmo.com and testmo.com/blog). Endpoint paths, authentication, and pagination are grounded in those sources; request and response schemas are illustrative and should be verified against the live docs and your instance. Endpoints under the /projects/{project_id}/cases and /folders paths are in beta and may change.'
+  version: '1.0'
+  contact:
+    name: Testmo
+    url: https://www.testmo.com
+servers:
+- url: https://{instance}.testmo.net/api/v1
+  description: Per-instance Testmo API base. Replace {instance} with your Testmo subdomain.
+  variables:
+    instance:
+      default: your-name
+      description: Your Testmo instance subdomain (e.g. your-name in your-name.testmo.net).
+security:
+- bearerAuth: []
+tags:
+- name: Test Case Management
+  description: Beta read/write API for cases, folders, and attachments.
+paths:
+  /projects/{project_id}/cases:
+    parameters:
+    - $ref: '#/components/parameters/ProjectId'
+    get:
+      operationId: listCases
+      tags:
+      - Test Case Management
+      summary: List cases (beta)
+      description: Lists the test cases of a project with filtering (folder, template, date range) and pagination. Beta endpoint.
+      parameters:
+      - $ref: '#/components/parameters/Page'
+      - $ref: '#/components/parameters/PerPage'
+      - name: folder_id
+        in: query
+        required: false
+        description: Filter cases by folder.
+        schema:
+          type: integer
+      - name: template_id
+        in: query
+        required: false
+        description: Filter cases by template.
+        schema:
+          type: integer
+      - name: expands
+        in: query
+        required: false
+        description: Comma-separated related resources to expand (for example automation_links).
+        schema:
+          type: string
+      responses:
+        '200':
+          description: A paginated list of cases.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CaseList'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    post:
+      operationId: createCases
+      tags:
+      - Test Case Management
+      summary: Create cases (beta)
+      description: Creates test cases in bulk (up to 100 per request). Beta endpoint.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CaseBulkInput'
+      responses:
+        '200':
+          description: The created cases.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CaseList'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+    patch:
+      operationId: updateCases
+      tags:
+      - Test Case Management
+      summary: Update cases (beta)
+      description: Updates test cases in bulk (up to 100 per request). Beta endpoint.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CaseBulkInput'
+      responses:
+        '200':
+          description: The updated cases.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CaseList'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+    delete:
+      operationId: deleteCases
+      tags:
+      - Test Case Management
+      summary: Delete cases (beta)
+      description: Deletes test cases in bulk by ID array (up to 100). Beta endpoint.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IdArray'
+      responses:
+        '200':
+          description: Deletion confirmation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /folders:
+    get:
+      operationId: listFolders
+      tags:
+      - Test Case Management
+      summary: List folders (beta)
+      description: Lists case folders with filtering by parent ID or name. Beta endpoint.
+      parameters:
+      - $ref: '#/components/parameters/Page'
+      - $ref: '#/components/parameters/PerPage'
+      - name: parent_id
+        in: query
+        required: false
+        description: Filter folders by parent folder.
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: A paginated list of folders.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FolderList'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    post:
+      operationId: createFolders
+      tags:
+      - Test Case Management
+      summary: Create folders (beta)
+      description: Creates case folders in bulk (up to 100). Beta endpoint.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FolderBulkInput'
+      responses:
+        '200':
+          description: The created folders.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FolderList'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+    patch:
+      operationId: updateFolders
+      tags:
+      - Test Case Management
+      summary: Update folders (beta)
+      description: Updates case folders in bulk (up to 100). Beta endpoint.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FolderBulkInput'
+      responses:
+        '200':
+          description: The updated folders.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FolderList'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+    delete:
+      operationId: deleteFolders
+      tags:
+      - Test Case Management
+      summary: Delete folders (beta)
+      description: Deletes case folders in bulk by ID array (up to 100). Beta endpoint.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IdArray'
+      responses:
+        '200':
+          description: Deletion confirmation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /cases/{case_id}/attachments:
+    parameters:
+    - name: case_id
+      in: path
+      required: true
+      description: The ID of the case.
+      schema:
+        type: integer
+    get:
+      operationId: listCaseAttachments
+      tags:
+      - Test Case Management
+      summary: List case attachments (beta)
+      description: Retrieves the attachment details for a case. Beta endpoint.
+      responses:
+        '200':
+          description: A list of attachments.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AttachmentList'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    post:
+      operationId: uploadCaseAttachments
+      tags:
+      - Test Case Management
+      summary: Upload case attachments (beta)
+      description: Uploads attachments to a case in bulk (up to 20). Beta endpoint.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                files:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+      responses:
+        '200':
+          description: The uploaded attachments.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AttachmentList'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+components:
+  responses:
+    ValidationError:
+      description: The request payload failed validation.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Missing or invalid API token.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: The requested resource was not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  schemas:
+    Folder:
+      type: object
+      properties:
+        id:
+          type: integer
+        parent_id:
+          type: integer
+          nullable: true
+        name:
+          type: string
+    AttachmentList:
+      type: object
+      properties:
+        result:
+          type: array
+          items:
+            $ref: '#/components/schemas/Attachment'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+    IdArray:
+      type: object
+      required:
+      - ids
+      properties:
+        ids:
+          type: array
+          items:
+            type: integer
+    FolderList:
+      type: object
+      properties:
+        result:
+          type: array
+          items:
+            $ref: '#/components/schemas/Folder'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+    CaseList:
+      type: object
+      properties:
+        result:
+          type: array
+          items:
+            $ref: '#/components/schemas/Case'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+    DeleteResponse:
+      type: object
+      properties:
+        deleted:
+          type: boolean
+        count:
+          type: integer
+    Attachment:
+      type: object
+      properties:
+        id:
+          type: integer
+        case_id:
+          type: integer
+        filename:
+          type: string
+        size:
+          type: integer
+    FolderBulkInput:
+      type: object
+      required:
+      - folders
+      properties:
+        folders:
+          type: array
+          maxItems: 100
+          items:
+            $ref: '#/components/schemas/Folder'
+    Case:
+      type: object
+      properties:
+        id:
+          type: integer
+        project_id:
+          type: integer
+        folder_id:
+          type: integer
+          nullable: true
+        template_id:
+          type: integer
+          nullable: true
+        name:
+          type: string
+    CaseBulkInput:
+      type: object
+      required:
+      - cases
+      properties:
+        cases:
+          type: array
+          maxItems: 100
+          items:
+            $ref: '#/components/schemas/Case'
+    Pagination:
+      type: object
+      properties:
+        page:
+          type: integer
+        per_page:
+          type: integer
+        prev_page:
+          type: integer
+          nullable: true
+        next_page:
+          type: integer
+          nullable: true
+        last_page:
+          type: integer
+    Error:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+            message:
+              type: string
+  parameters:
+    Page:
+      name: page
+      in: query
+      required: false
+      description: The page of results to retrieve.
+      schema:
+        type: integer
+        default: 1
+    ProjectId:
+      name: project_id
+      in: path
+      required: true
+      description: The ID of the project.
+      schema:
+        type: integer
+    PerPage:
+      name: per_page
+      in: query
+      required: false
+      description: The number of entries per page.
+      schema:
+        type: integer
+        default: 100
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: 'Personal API token generated from your Testmo profile page, passed as `Authorization: Bearer <token>`.'

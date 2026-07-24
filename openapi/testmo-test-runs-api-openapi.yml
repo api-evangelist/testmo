@@ -1,0 +1,257 @@
+openapi: 3.0.3
+info:
+  title: Testmo REST Automation Runs Test Runs API
+  description: 'The Testmo REST API provides read access to the major entities of a Testmo unified test management instance - projects, manual test runs and their results, automation runs, automation sources, exploratory sessions, and milestones - so teams can build custom analytics, reporting, and integrations. A beta test case management surface (cases, folders, attachments) adds create/update/delete operations. The API is per-instance: the base URL is https://{instance}.testmo.net/api/v1, where {instance} is your own Testmo subdomain. All requests authenticate with a personal API token generated from your Testmo profile page, passed as `Authorization: Bearer <token>`. List endpoints support common pagination (page, per_page), sorting (sort, order), and filtering parameters.
+
+    NOTE: This document is modeled from Testmo''s public documentation and blog posts (docs.testmo.com and testmo.com/blog). Endpoint paths, authentication, and pagination are grounded in those sources; request and response schemas are illustrative and should be verified against the live docs and your instance. Endpoints under the /projects/{project_id}/cases and /folders paths are in beta and may change.'
+  version: '1.0'
+  contact:
+    name: Testmo
+    url: https://www.testmo.com
+servers:
+- url: https://{instance}.testmo.net/api/v1
+  description: Per-instance Testmo API base. Replace {instance} with your Testmo subdomain.
+  variables:
+    instance:
+      default: your-name
+      description: Your Testmo instance subdomain (e.g. your-name in your-name.testmo.net).
+security:
+- bearerAuth: []
+tags:
+- name: Test Runs
+  description: Manual test runs and their individual results.
+paths:
+  /runs/{run_id}:
+    parameters:
+    - name: run_id
+      in: path
+      required: true
+      description: The ID of the test run.
+      schema:
+        type: integer
+    get:
+      operationId: getRun
+      tags:
+      - Test Runs
+      summary: Get a test run
+      description: Retrieves a single manual test run with aggregated statistics and test numbers.
+      responses:
+        '200':
+          description: The requested test run.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Run'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /projects/{project_id}/runs:
+    parameters:
+    - $ref: '#/components/parameters/ProjectId'
+    get:
+      operationId: listRuns
+      tags:
+      - Test Runs
+      summary: List test runs for a project
+      description: Lists the manual test runs of a project. Returns active or closed runs with aggregated statistics. Supports filtering (for example by milestone, configuration, status, or start date).
+      parameters:
+      - $ref: '#/components/parameters/Page'
+      - $ref: '#/components/parameters/PerPage'
+      - name: milestone_id
+        in: query
+        required: false
+        description: Filter runs linked to a specific milestone.
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: A paginated list of test runs.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RunList'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /runs/{run_id}/results:
+    parameters:
+    - name: run_id
+      in: path
+      required: true
+      description: The ID of the test run.
+      schema:
+        type: integer
+    get:
+      operationId: listRunResults
+      tags:
+      - Test Runs
+      summary: List results for a test run
+      description: Extracts and filters the individual test results of a manual test run. Results can be filtered by status, creator, and creation date, and related data can be expanded.
+      parameters:
+      - $ref: '#/components/parameters/Page'
+      - $ref: '#/components/parameters/PerPage'
+      - name: status_id
+        in: query
+        required: false
+        description: Filter results by status (for example Passed, Failed, Blocked).
+        schema:
+          type: integer
+      - name: created_by
+        in: query
+        required: false
+        description: Filter results by the ID of the user who created them.
+        schema:
+          type: integer
+      - name: created_after
+        in: query
+        required: false
+        description: Only results created after this timestamp.
+        schema:
+          type: string
+          format: date-time
+      - name: created_before
+        in: query
+        required: false
+        description: Only results created before this timestamp.
+        schema:
+          type: string
+          format: date-time
+      - name: expands
+        in: query
+        required: false
+        description: Comma-separated related resources to expand (for example users,issues).
+        schema:
+          type: string
+      responses:
+        '200':
+          description: A paginated list of test results.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResultList'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+components:
+  parameters:
+    Page:
+      name: page
+      in: query
+      required: false
+      description: The page of results to retrieve.
+      schema:
+        type: integer
+        default: 1
+    ProjectId:
+      name: project_id
+      in: path
+      required: true
+      description: The ID of the project.
+      schema:
+        type: integer
+    PerPage:
+      name: per_page
+      in: query
+      required: false
+      description: The number of entries per page.
+      schema:
+        type: integer
+        default: 100
+  responses:
+    Unauthorized:
+      description: Missing or invalid API token.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: The requested resource was not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  schemas:
+    ResultList:
+      type: object
+      properties:
+        result:
+          type: array
+          items:
+            $ref: '#/components/schemas/Result'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+    RunList:
+      type: object
+      properties:
+        result:
+          type: array
+          items:
+            $ref: '#/components/schemas/Run'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+    Pagination:
+      type: object
+      properties:
+        page:
+          type: integer
+        per_page:
+          type: integer
+        prev_page:
+          type: integer
+          nullable: true
+        next_page:
+          type: integer
+          nullable: true
+        last_page:
+          type: integer
+    Run:
+      type: object
+      properties:
+        id:
+          type: integer
+        project_id:
+          type: integer
+        name:
+          type: string
+        is_closed:
+          type: boolean
+        milestone_id:
+          type: integer
+          nullable: true
+        result_summary:
+          type: object
+          additionalProperties: true
+    Error:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+            message:
+              type: string
+    Result:
+      type: object
+      properties:
+        id:
+          type: integer
+        run_id:
+          type: integer
+        test_id:
+          type: integer
+        status_id:
+          type: integer
+        created_by:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: 'Personal API token generated from your Testmo profile page, passed as `Authorization: Bearer <token>`.'

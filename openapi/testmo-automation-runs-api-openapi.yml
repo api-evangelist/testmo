@@ -1,0 +1,171 @@
+openapi: 3.0.3
+info:
+  title: Testmo REST Automation Runs API
+  description: 'The Testmo REST API provides read access to the major entities of a Testmo unified test management instance - projects, manual test runs and their results, automation runs, automation sources, exploratory sessions, and milestones - so teams can build custom analytics, reporting, and integrations. A beta test case management surface (cases, folders, attachments) adds create/update/delete operations. The API is per-instance: the base URL is https://{instance}.testmo.net/api/v1, where {instance} is your own Testmo subdomain. All requests authenticate with a personal API token generated from your Testmo profile page, passed as `Authorization: Bearer <token>`. List endpoints support common pagination (page, per_page), sorting (sort, order), and filtering parameters.
+
+    NOTE: This document is modeled from Testmo''s public documentation and blog posts (docs.testmo.com and testmo.com/blog). Endpoint paths, authentication, and pagination are grounded in those sources; request and response schemas are illustrative and should be verified against the live docs and your instance. Endpoints under the /projects/{project_id}/cases and /folders paths are in beta and may change.'
+  version: '1.0'
+  contact:
+    name: Testmo
+    url: https://www.testmo.com
+servers:
+- url: https://{instance}.testmo.net/api/v1
+  description: Per-instance Testmo API base. Replace {instance} with your Testmo subdomain.
+  variables:
+    instance:
+      default: your-name
+      description: Your Testmo instance subdomain (e.g. your-name in your-name.testmo.net).
+security:
+- bearerAuth: []
+tags:
+- name: Automation Runs
+  description: Automation runs submitted from CI/CD, with aggregated statistics.
+paths:
+  /automation/runs/{run_id}:
+    parameters:
+    - name: run_id
+      in: path
+      required: true
+      description: The ID of the automation run.
+      schema:
+        type: integer
+    get:
+      operationId: getAutomationRun
+      tags:
+      - Automation Runs
+      summary: Get an automation run
+      description: Retrieves a single automation run, including aggregated statistics of the test results and the overall run status.
+      responses:
+        '200':
+          description: The requested automation run.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AutomationRun'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /projects/{project_id}/automation/runs:
+    parameters:
+    - $ref: '#/components/parameters/ProjectId'
+    get:
+      operationId: listAutomationRuns
+      tags:
+      - Automation Runs
+      summary: List automation runs for a project
+      description: Lists the automation runs of a project with aggregated result statistics. Supports filters such as milestone, configuration, source, status, and date.
+      parameters:
+      - $ref: '#/components/parameters/Page'
+      - $ref: '#/components/parameters/PerPage'
+      - name: source_id
+        in: query
+        required: false
+        description: Filter automation runs by automation source.
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: A paginated list of automation runs.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AutomationRunList'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+components:
+  parameters:
+    Page:
+      name: page
+      in: query
+      required: false
+      description: The page of results to retrieve.
+      schema:
+        type: integer
+        default: 1
+    ProjectId:
+      name: project_id
+      in: path
+      required: true
+      description: The ID of the project.
+      schema:
+        type: integer
+    PerPage:
+      name: per_page
+      in: query
+      required: false
+      description: The number of entries per page.
+      schema:
+        type: integer
+        default: 100
+  responses:
+    Unauthorized:
+      description: Missing or invalid API token.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: The requested resource was not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  schemas:
+    Pagination:
+      type: object
+      properties:
+        page:
+          type: integer
+        per_page:
+          type: integer
+        prev_page:
+          type: integer
+          nullable: true
+        next_page:
+          type: integer
+          nullable: true
+        last_page:
+          type: integer
+    Error:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+            message:
+              type: string
+    AutomationRun:
+      type: object
+      properties:
+        id:
+          type: integer
+        project_id:
+          type: integer
+        name:
+          type: string
+        source_id:
+          type: integer
+        status:
+          type: string
+        result_summary:
+          type: object
+          additionalProperties: true
+    AutomationRunList:
+      type: object
+      properties:
+        result:
+          type: array
+          items:
+            $ref: '#/components/schemas/AutomationRun'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: 'Personal API token generated from your Testmo profile page, passed as `Authorization: Bearer <token>`.'
