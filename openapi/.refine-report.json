@@ -1,0 +1,26 @@
+{
+  "provider": "testmo",
+  "sources": [
+    "testmo-automation-runs-api-openapi.yml",
+    "testmo-automation-sources-api-openapi.yml",
+    "testmo-milestones-api-openapi.yml",
+    "testmo-projects-api-openapi.yml",
+    "testmo-sessions-api-openapi.yml",
+    "testmo-test-case-management-api-openapi.yml",
+    "testmo-test-runs-api-openapi.yml"
+  ],
+  "outputs": [
+    "testmo-automation-runs-api-openapi.yml",
+    "testmo-automation-sources-api-openapi.yml",
+    "testmo-milestones-api-openapi.yml",
+    "testmo-projects-api-openapi.yml",
+    "testmo-sessions-api-openapi.yml",
+    "testmo-test-case-management-api-openapi.yml",
+    "testmo-test-runs-api-openapi.yml"
+  ],
+  "archived": [],
+  "errors": [],
+  "warnings": [],
+  "notes": [],
+  "skipped": []
+}
