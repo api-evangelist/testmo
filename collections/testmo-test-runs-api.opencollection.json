@@ -1,0 +1,141 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Testmo REST Automation Runs Test Runs API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Test Runs",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get a test run",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{instance}.testmo.net/api/v1/runs/:run_id",
+            "params": [
+              {
+                "name": "run_id",
+                "value": "",
+                "type": "path",
+                "description": "The ID of the test run."
+              }
+            ]
+          },
+          "docs": "Retrieves a single manual test run with aggregated statistics and test numbers."
+        },
+        {
+          "info": {
+            "name": "List test runs for a project",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{instance}.testmo.net/api/v1/projects/:project_id/runs",
+            "params": [
+              {
+                "name": "project_id",
+                "value": "",
+                "type": "path",
+                "description": "The ID of the project."
+              },
+              {
+                "name": "page",
+                "value": "",
+                "type": "query",
+                "description": "The page of results to retrieve."
+              },
+              {
+                "name": "per_page",
+                "value": "",
+                "type": "query",
+                "description": "The number of entries per page."
+              },
+              {
+                "name": "milestone_id",
+                "value": "",
+                "type": "query",
+                "description": "Filter runs linked to a specific milestone."
+              }
+            ]
+          },
+          "docs": "Lists the manual test runs of a project. Returns active or closed runs with aggregated statistics. Supports filtering (for example by milestone, configuration, status, or start date)."
+        },
+        {
+          "info": {
+            "name": "List results for a test run",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{instance}.testmo.net/api/v1/runs/:run_id/results",
+            "params": [
+              {
+                "name": "run_id",
+                "value": "",
+                "type": "path",
+                "description": "The ID of the test run."
+              },
+              {
+                "name": "page",
+                "value": "",
+                "type": "query",
+                "description": "The page of results to retrieve."
+              },
+              {
+                "name": "per_page",
+                "value": "",
+                "type": "query",
+                "description": "The number of entries per page."
+              },
+              {
+                "name": "status_id",
+                "value": "",
+                "type": "query",
+                "description": "Filter results by status (for example Passed, Failed, Blocked)."
+              },
+              {
+                "name": "created_by",
+                "value": "",
+                "type": "query",
+                "description": "Filter results by the ID of the user who created them."
+              },
+              {
+                "name": "created_after",
+                "value": "",
+                "type": "query",
+                "description": "Only results created after this timestamp."
+              },
+              {
+                "name": "created_before",
+                "value": "",
+                "type": "query",
+                "description": "Only results created before this timestamp."
+              },
+              {
+                "name": "expands",
+                "value": "",
+                "type": "query",
+                "description": "Comma-separated related resources to expand (for example users,issues)."
+              }
+            ]
+          },
+          "docs": "Extracts and filters the individual test results of a manual test run. Results can be filtered by status, creator, and creation date, and related data can be expanded."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

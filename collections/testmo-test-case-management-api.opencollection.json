@@ -1,0 +1,266 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Testmo REST Automation Runs Test Case Management API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Test Case Management",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List cases (beta)",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{instance}.testmo.net/api/v1/projects/:project_id/cases",
+            "params": [
+              {
+                "name": "project_id",
+                "value": "",
+                "type": "path",
+                "description": "The ID of the project."
+              },
+              {
+                "name": "page",
+                "value": "",
+                "type": "query",
+                "description": "The page of results to retrieve."
+              },
+              {
+                "name": "per_page",
+                "value": "",
+                "type": "query",
+                "description": "The number of entries per page."
+              },
+              {
+                "name": "folder_id",
+                "value": "",
+                "type": "query",
+                "description": "Filter cases by folder."
+              },
+              {
+                "name": "template_id",
+                "value": "",
+                "type": "query",
+                "description": "Filter cases by template."
+              },
+              {
+                "name": "expands",
+                "value": "",
+                "type": "query",
+                "description": "Comma-separated related resources to expand (for example automation_links)."
+              }
+            ]
+          },
+          "docs": "Lists the test cases of a project with filtering (folder, template, date range) and pagination. Beta endpoint."
+        },
+        {
+          "info": {
+            "name": "Create cases (beta)",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://{instance}.testmo.net/api/v1/projects/:project_id/cases",
+            "params": [
+              {
+                "name": "project_id",
+                "value": "",
+                "type": "path",
+                "description": "The ID of the project."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Creates test cases in bulk (up to 100 per request). Beta endpoint."
+        },
+        {
+          "info": {
+            "name": "Update cases (beta)",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://{instance}.testmo.net/api/v1/projects/:project_id/cases",
+            "params": [
+              {
+                "name": "project_id",
+                "value": "",
+                "type": "path",
+                "description": "The ID of the project."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Updates test cases in bulk (up to 100 per request). Beta endpoint."
+        },
+        {
+          "info": {
+            "name": "Delete cases (beta)",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://{instance}.testmo.net/api/v1/projects/:project_id/cases",
+            "params": [
+              {
+                "name": "project_id",
+                "value": "",
+                "type": "path",
+                "description": "The ID of the project."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Deletes test cases in bulk by ID array (up to 100). Beta endpoint."
+        },
+        {
+          "info": {
+            "name": "List folders (beta)",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{instance}.testmo.net/api/v1/folders",
+            "params": [
+              {
+                "name": "page",
+                "value": "",
+                "type": "query",
+                "description": "The page of results to retrieve."
+              },
+              {
+                "name": "per_page",
+                "value": "",
+                "type": "query",
+                "description": "The number of entries per page."
+              },
+              {
+                "name": "parent_id",
+                "value": "",
+                "type": "query",
+                "description": "Filter folders by parent folder."
+              }
+            ]
+          },
+          "docs": "Lists case folders with filtering by parent ID or name. Beta endpoint."
+        },
+        {
+          "info": {
+            "name": "Create folders (beta)",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://{instance}.testmo.net/api/v1/folders",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Creates case folders in bulk (up to 100). Beta endpoint."
+        },
+        {
+          "info": {
+            "name": "Update folders (beta)",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://{instance}.testmo.net/api/v1/folders",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Updates case folders in bulk (up to 100). Beta endpoint."
+        },
+        {
+          "info": {
+            "name": "Delete folders (beta)",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://{instance}.testmo.net/api/v1/folders",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Deletes case folders in bulk by ID array (up to 100). Beta endpoint."
+        },
+        {
+          "info": {
+            "name": "List case attachments (beta)",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{instance}.testmo.net/api/v1/cases/:case_id/attachments",
+            "params": [
+              {
+                "name": "case_id",
+                "value": "",
+                "type": "path",
+                "description": "The ID of the case."
+              }
+            ]
+          },
+          "docs": "Retrieves the attachment details for a case. Beta endpoint."
+        },
+        {
+          "info": {
+            "name": "Upload case attachments (beta)",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://{instance}.testmo.net/api/v1/cases/:case_id/attachments",
+            "params": [
+              {
+                "name": "case_id",
+                "value": "",
+                "type": "path",
+                "description": "The ID of the case."
+              }
+            ],
+            "body": {
+              "type": "multipart-form",
+              "data": [
+                {
+                  "name": "files",
+                  "type": "text",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "docs": "Uploads attachments to a case in bulk (up to 20). Beta endpoint."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

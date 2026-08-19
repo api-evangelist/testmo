@@ -1,0 +1,74 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Testmo REST Automation Runs Milestones API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Milestones",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get a milestone",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{instance}.testmo.net/api/v1/milestones/:milestone_id",
+            "params": [
+              {
+                "name": "milestone_id",
+                "value": "",
+                "type": "path",
+                "description": "The ID of the milestone."
+              }
+            ]
+          },
+          "docs": "Retrieves a single milestone, optionally including statistics for the linked test runs and sessions."
+        },
+        {
+          "info": {
+            "name": "List milestones for a project",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{instance}.testmo.net/api/v1/projects/:project_id/milestones",
+            "params": [
+              {
+                "name": "project_id",
+                "value": "",
+                "type": "path",
+                "description": "The ID of the project."
+              },
+              {
+                "name": "page",
+                "value": "",
+                "type": "query",
+                "description": "The page of results to retrieve."
+              },
+              {
+                "name": "per_page",
+                "value": "",
+                "type": "query",
+                "description": "The number of entries per page."
+              }
+            ]
+          },
+          "docs": "Lists all milestones of a project, optionally including linked run and session statistics."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

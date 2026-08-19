@@ -1,0 +1,80 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Testmo REST Automation Runs API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Automation Runs",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get an automation run",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{instance}.testmo.net/api/v1/automation/runs/:run_id",
+            "params": [
+              {
+                "name": "run_id",
+                "value": "",
+                "type": "path",
+                "description": "The ID of the automation run."
+              }
+            ]
+          },
+          "docs": "Retrieves a single automation run, including aggregated statistics of the test results and the overall run status."
+        },
+        {
+          "info": {
+            "name": "List automation runs for a project",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{instance}.testmo.net/api/v1/projects/:project_id/automation/runs",
+            "params": [
+              {
+                "name": "project_id",
+                "value": "",
+                "type": "path",
+                "description": "The ID of the project."
+              },
+              {
+                "name": "page",
+                "value": "",
+                "type": "query",
+                "description": "The page of results to retrieve."
+              },
+              {
+                "name": "per_page",
+                "value": "",
+                "type": "query",
+                "description": "The number of entries per page."
+              },
+              {
+                "name": "source_id",
+                "value": "",
+                "type": "query",
+                "description": "Filter automation runs by automation source."
+              }
+            ]
+          },
+          "docs": "Lists the automation runs of a project with aggregated result statistics. Supports filters such as milestone, configuration, source, status, and date."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}
