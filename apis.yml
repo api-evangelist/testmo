@@ -108,6 +108,8 @@ apis:
   humanURL: https://docs.testmo.com/api
   baseURL: https://{instance}.testmo.net/api/v1
   tags:
+  - Project
+  tags_raw:
   - Projects
   properties:
   - type: OpenAPI
