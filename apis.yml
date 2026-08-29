@@ -10,6 +10,18 @@ description: Testmo is a unified test management platform that brings manual tes
   exploratory sessions, and milestones for custom analytics, reporting, and
   integrations - plus a beta test case management API and a CLI (@testmo/testmo-cli)
   that submits automation results from CI/CD pipelines.
+deliveryModel:
+  model: saas
+  open_source: false
+  commercial: true
+  callable_host: true
+  label: Hosted service · you call their endpoint
+  confidence: high
+  source:
+  - openapi
+  - pricing
+  generated: '2026-08-28'
+  method: derived
 accessModel:
   pricing: freemium
   onboarding: self-serve
