@@ -1,9 +1,7 @@
-openapi: 3.0.3
+openapi: 3.2.0
 info:
-  title: Testmo REST Automation Runs Sessions API
-  description: 'The Testmo REST API provides read access to the major entities of a Testmo unified test management instance - projects, manual test runs and their results, automation runs, automation sources, exploratory sessions, and milestones - so teams can build custom analytics, reporting, and integrations. A beta test case management surface (cases, folders, attachments) adds create/update/delete operations. The API is per-instance: the base URL is https://{instance}.testmo.net/api/v1, where {instance} is your own Testmo subdomain. All requests authenticate with a personal API token generated from your Testmo profile page, passed as `Authorization: Bearer <token>`. List endpoints support common pagination (page, per_page), sorting (sort, order), and filtering parameters.
-
-    NOTE: This document is modeled from Testmo''s public documentation and blog posts (docs.testmo.com and testmo.com/blog). Endpoint paths, authentication, and pagination are grounded in those sources; request and response schemas are illustrative and should be verified against the live docs and your instance. Endpoints under the /projects/{project_id}/cases and /folders paths are in beta and may change.'
+  title: Testmo REST Sessions API
+  description: The Testmo REST API provides read access to the major entities of a Testmo unified test management instance - projects, manual test runs and their results, automation runs, automation sources, exploratory sessions, and milestones - so teams can build custom analytics, reporting, and integrations.
   version: '1.0'
   contact:
     name: Testmo
@@ -70,44 +68,17 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 components:
-  parameters:
-    Page:
-      name: page
-      in: query
-      required: false
-      description: The page of results to retrieve.
-      schema:
-        type: integer
-        default: 1
-    ProjectId:
-      name: project_id
-      in: path
-      required: true
-      description: The ID of the project.
-      schema:
-        type: integer
-    PerPage:
-      name: per_page
-      in: query
-      required: false
-      description: The number of entries per page.
-      schema:
-        type: integer
-        default: 100
-  responses:
-    Unauthorized:
-      description: Missing or invalid API token.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    NotFound:
-      description: The requested resource was not found.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
   schemas:
+    Error:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+            message:
+              type: string
     Session:
       type: object
       properties:
@@ -130,11 +101,13 @@ components:
         per_page:
           type: integer
         prev_page:
-          type: integer
-          nullable: true
+          type:
+          - integer
+          - 'null'
         next_page:
-          type: integer
-          nullable: true
+          type:
+          - integer
+          - 'null'
         last_page:
           type: integer
     SessionList:
@@ -146,16 +119,43 @@ components:
             $ref: '#/components/schemas/Session'
         pagination:
           $ref: '#/components/schemas/Pagination'
-    Error:
-      type: object
-      properties:
-        error:
-          type: object
-          properties:
-            code:
-              type: string
-            message:
-              type: string
+  parameters:
+    PerPage:
+      name: per_page
+      in: query
+      required: false
+      description: The number of entries per page.
+      schema:
+        type: integer
+        default: 100
+    Page:
+      name: page
+      in: query
+      required: false
+      description: The page of results to retrieve.
+      schema:
+        type: integer
+        default: 1
+    ProjectId:
+      name: project_id
+      in: path
+      required: true
+      description: The ID of the project.
+      schema:
+        type: integer
+  responses:
+    NotFound:
+      description: The requested resource was not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Missing or invalid API token.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   securitySchemes:
     bearerAuth:
       type: http

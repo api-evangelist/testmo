@@ -1,9 +1,7 @@
-openapi: 3.0.3
+openapi: 3.2.0
 info:
-  title: Testmo REST Automation Runs Test Case Management API
-  description: 'The Testmo REST API provides read access to the major entities of a Testmo unified test management instance - projects, manual test runs and their results, automation runs, automation sources, exploratory sessions, and milestones - so teams can build custom analytics, reporting, and integrations. A beta test case management surface (cases, folders, attachments) adds create/update/delete operations. The API is per-instance: the base URL is https://{instance}.testmo.net/api/v1, where {instance} is your own Testmo subdomain. All requests authenticate with a personal API token generated from your Testmo profile page, passed as `Authorization: Bearer <token>`. List endpoints support common pagination (page, per_page), sorting (sort, order), and filtering parameters.
-
-    NOTE: This document is modeled from Testmo''s public documentation and blog posts (docs.testmo.com and testmo.com/blog). Endpoint paths, authentication, and pagination are grounded in those sources; request and response schemas are illustrative and should be verified against the live docs and your instance. Endpoints under the /projects/{project_id}/cases and /folders paths are in beta and may change.'
+  title: Testmo REST Test Case Management API
+  description: The Testmo REST API provides read access to the major entities of a Testmo unified test management instance - projects, manual test runs and their results, automation runs, automation sources, exploratory sessions, and milestones - so teams can build custom analytics, reporting, and integrations.
   version: '1.0'
   contact:
     name: Testmo
@@ -276,54 +274,28 @@ paths:
         '422':
           $ref: '#/components/responses/ValidationError'
 components:
-  responses:
-    ValidationError:
-      description: The request payload failed validation.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    Unauthorized:
-      description: Missing or invalid API token.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    NotFound:
-      description: The requested resource was not found.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
   schemas:
-    Folder:
+    Error:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+            message:
+              type: string
+    Attachment:
       type: object
       properties:
         id:
           type: integer
-        parent_id:
+        case_id:
           type: integer
-          nullable: true
-        name:
+        filename:
           type: string
-    AttachmentList:
-      type: object
-      properties:
-        result:
-          type: array
-          items:
-            $ref: '#/components/schemas/Attachment'
-        pagination:
-          $ref: '#/components/schemas/Pagination'
-    IdArray:
-      type: object
-      required:
-      - ids
-      properties:
-        ids:
-          type: array
-          items:
-            type: integer
+        size:
+          type: integer
     FolderList:
       type: object
       properties:
@@ -349,17 +321,43 @@ components:
           type: boolean
         count:
           type: integer
-    Attachment:
+    Pagination:
+      type: object
+      properties:
+        page:
+          type: integer
+        per_page:
+          type: integer
+        prev_page:
+          type:
+          - integer
+          - 'null'
+        next_page:
+          type:
+          - integer
+          - 'null'
+        last_page:
+          type: integer
+    Folder:
       type: object
       properties:
         id:
           type: integer
-        case_id:
-          type: integer
-        filename:
+        parent_id:
+          type:
+          - integer
+          - 'null'
+        name:
           type: string
-        size:
-          type: integer
+    IdArray:
+      type: object
+      required:
+      - ids
+      properties:
+        ids:
+          type: array
+          items:
+            type: integer
     FolderBulkInput:
       type: object
       required:
@@ -370,21 +368,15 @@ components:
           maxItems: 100
           items:
             $ref: '#/components/schemas/Folder'
-    Case:
+    AttachmentList:
       type: object
       properties:
-        id:
-          type: integer
-        project_id:
-          type: integer
-        folder_id:
-          type: integer
-          nullable: true
-        template_id:
-          type: integer
-          nullable: true
-        name:
-          type: string
+        result:
+          type: array
+          items:
+            $ref: '#/components/schemas/Attachment'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
     CaseBulkInput:
       type: object
       required:
@@ -395,32 +387,32 @@ components:
           maxItems: 100
           items:
             $ref: '#/components/schemas/Case'
-    Pagination:
+    Case:
       type: object
       properties:
-        page:
+        id:
           type: integer
-        per_page:
+        project_id:
           type: integer
-        prev_page:
-          type: integer
-          nullable: true
-        next_page:
-          type: integer
-          nullable: true
-        last_page:
-          type: integer
-    Error:
-      type: object
-      properties:
-        error:
-          type: object
-          properties:
-            code:
-              type: string
-            message:
-              type: string
+        folder_id:
+          type:
+          - integer
+          - 'null'
+        template_id:
+          type:
+          - integer
+          - 'null'
+        name:
+          type: string
   parameters:
+    PerPage:
+      name: per_page
+      in: query
+      required: false
+      description: The number of entries per page.
+      schema:
+        type: integer
+        default: 100
     Page:
       name: page
       in: query
@@ -436,14 +428,25 @@ components:
       description: The ID of the project.
       schema:
         type: integer
-    PerPage:
-      name: per_page
-      in: query
-      required: false
-      description: The number of entries per page.
-      schema:
-        type: integer
-        default: 100
+  responses:
+    ValidationError:
+      description: The request payload failed validation.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: The requested resource was not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Missing or invalid API token.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   securitySchemes:
     bearerAuth:
       type: http

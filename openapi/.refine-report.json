@@ -1,13 +1,7 @@
 {
   "provider": "testmo",
   "sources": [
-    "testmo-automation-runs-api-openapi.yml",
-    "testmo-automation-sources-api-openapi.yml",
-    "testmo-milestones-api-openapi.yml",
-    "testmo-projects-api-openapi.yml",
-    "testmo-sessions-api-openapi.yml",
-    "testmo-test-case-management-api-openapi.yml",
-    "testmo-test-runs-api-openapi.yml"
+    "_original/testmo-openapi.yml"
   ],
   "outputs": [
     "testmo-automation-runs-api-openapi.yml",
@@ -21,6 +15,18 @@
   "archived": [],
   "errors": [],
   "warnings": [],
-  "notes": [],
-  "skipped": []
+  "notes": [
+    "sourced from openapi/_original/ (1 archived document(s)); previously refined output at the top level was skipped rather than re-split",
+    "testmo-openapi.yml: upgraded openapi 3.0.3 -> OpenAPI 3.2.0",
+    "apis.yml register: already-registered"
+  ],
+  "skipped": [
+    "testmo-automation-runs-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "testmo-automation-sources-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "testmo-milestones-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "testmo-projects-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "testmo-sessions-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "testmo-test-case-management-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "testmo-test-runs-api-openapi.yml: previously refined output, superseded by openapi/_original/"
+  ]
 }
