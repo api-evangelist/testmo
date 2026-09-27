@@ -68,7 +68,40 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 components:
+  parameters:
+    PerPage:
+      name: per_page
+      in: query
+      required: false
+      description: The number of entries per page.
+      schema:
+        type: integer
+        default: 100
+    ProjectId:
+      name: project_id
+      in: path
+      required: true
+      description: The ID of the project.
+      schema:
+        type: integer
+    Page:
+      name: page
+      in: query
+      required: false
+      description: The page of results to retrieve.
+      schema:
+        type: integer
+        default: 1
   schemas:
+    SessionList:
+      type: object
+      properties:
+        result:
+          type: array
+          items:
+            $ref: '#/components/schemas/Session'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
     Error:
       type: object
       properties:
@@ -110,39 +143,6 @@ components:
           - 'null'
         last_page:
           type: integer
-    SessionList:
-      type: object
-      properties:
-        result:
-          type: array
-          items:
-            $ref: '#/components/schemas/Session'
-        pagination:
-          $ref: '#/components/schemas/Pagination'
-  parameters:
-    PerPage:
-      name: per_page
-      in: query
-      required: false
-      description: The number of entries per page.
-      schema:
-        type: integer
-        default: 100
-    Page:
-      name: page
-      in: query
-      required: false
-      description: The page of results to retrieve.
-      schema:
-        type: integer
-        default: 1
-    ProjectId:
-      name: project_id
-      in: path
-      required: true
-      description: The ID of the project.
-      schema:
-        type: integer
   responses:
     NotFound:
       description: The requested resource was not found.

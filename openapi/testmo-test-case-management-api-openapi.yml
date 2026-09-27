@@ -274,7 +274,59 @@ paths:
         '422':
           $ref: '#/components/responses/ValidationError'
 components:
+  parameters:
+    PerPage:
+      name: per_page
+      in: query
+      required: false
+      description: The number of entries per page.
+      schema:
+        type: integer
+        default: 100
+    ProjectId:
+      name: project_id
+      in: path
+      required: true
+      description: The ID of the project.
+      schema:
+        type: integer
+    Page:
+      name: page
+      in: query
+      required: false
+      description: The page of results to retrieve.
+      schema:
+        type: integer
+        default: 1
   schemas:
+    FolderBulkInput:
+      type: object
+      required:
+      - folders
+      properties:
+        folders:
+          type: array
+          maxItems: 100
+          items:
+            $ref: '#/components/schemas/Folder'
+    IdArray:
+      type: object
+      required:
+      - ids
+      properties:
+        ids:
+          type: array
+          items:
+            type: integer
+    CaseList:
+      type: object
+      properties:
+        result:
+          type: array
+          items:
+            $ref: '#/components/schemas/Case'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
     Error:
       type: object
       properties:
@@ -296,24 +348,6 @@ components:
           type: string
         size:
           type: integer
-    FolderList:
-      type: object
-      properties:
-        result:
-          type: array
-          items:
-            $ref: '#/components/schemas/Folder'
-        pagination:
-          $ref: '#/components/schemas/Pagination'
-    CaseList:
-      type: object
-      properties:
-        result:
-          type: array
-          items:
-            $ref: '#/components/schemas/Case'
-        pagination:
-          $ref: '#/components/schemas/Pagination'
     DeleteResponse:
       type: object
       properties:
@@ -321,72 +355,6 @@ components:
           type: boolean
         count:
           type: integer
-    Pagination:
-      type: object
-      properties:
-        page:
-          type: integer
-        per_page:
-          type: integer
-        prev_page:
-          type:
-          - integer
-          - 'null'
-        next_page:
-          type:
-          - integer
-          - 'null'
-        last_page:
-          type: integer
-    Folder:
-      type: object
-      properties:
-        id:
-          type: integer
-        parent_id:
-          type:
-          - integer
-          - 'null'
-        name:
-          type: string
-    IdArray:
-      type: object
-      required:
-      - ids
-      properties:
-        ids:
-          type: array
-          items:
-            type: integer
-    FolderBulkInput:
-      type: object
-      required:
-      - folders
-      properties:
-        folders:
-          type: array
-          maxItems: 100
-          items:
-            $ref: '#/components/schemas/Folder'
-    AttachmentList:
-      type: object
-      properties:
-        result:
-          type: array
-          items:
-            $ref: '#/components/schemas/Attachment'
-        pagination:
-          $ref: '#/components/schemas/Pagination'
-    CaseBulkInput:
-      type: object
-      required:
-      - cases
-      properties:
-        cases:
-          type: array
-          maxItems: 100
-          items:
-            $ref: '#/components/schemas/Case'
     Case:
       type: object
       properties:
@@ -404,30 +372,62 @@ components:
           - 'null'
         name:
           type: string
-  parameters:
-    PerPage:
-      name: per_page
-      in: query
-      required: false
-      description: The number of entries per page.
-      schema:
-        type: integer
-        default: 100
-    Page:
-      name: page
-      in: query
-      required: false
-      description: The page of results to retrieve.
-      schema:
-        type: integer
-        default: 1
-    ProjectId:
-      name: project_id
-      in: path
-      required: true
-      description: The ID of the project.
-      schema:
-        type: integer
+    Folder:
+      type: object
+      properties:
+        id:
+          type: integer
+        parent_id:
+          type:
+          - integer
+          - 'null'
+        name:
+          type: string
+    Pagination:
+      type: object
+      properties:
+        page:
+          type: integer
+        per_page:
+          type: integer
+        prev_page:
+          type:
+          - integer
+          - 'null'
+        next_page:
+          type:
+          - integer
+          - 'null'
+        last_page:
+          type: integer
+    FolderList:
+      type: object
+      properties:
+        result:
+          type: array
+          items:
+            $ref: '#/components/schemas/Folder'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+    CaseBulkInput:
+      type: object
+      required:
+      - cases
+      properties:
+        cases:
+          type: array
+          maxItems: 100
+          items:
+            $ref: '#/components/schemas/Case'
+    AttachmentList:
+      type: object
+      properties:
+        result:
+          type: array
+          items:
+            $ref: '#/components/schemas/Attachment'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
   responses:
     ValidationError:
       description: The request payload failed validation.
