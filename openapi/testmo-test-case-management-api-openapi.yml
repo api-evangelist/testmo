@@ -274,50 +274,26 @@ paths:
         '422':
           $ref: '#/components/responses/ValidationError'
 components:
-  parameters:
-    PerPage:
-      name: per_page
-      in: query
-      required: false
-      description: The number of entries per page.
-      schema:
-        type: integer
-        default: 100
-    ProjectId:
-      name: project_id
-      in: path
-      required: true
-      description: The ID of the project.
-      schema:
-        type: integer
-    Page:
-      name: page
-      in: query
-      required: false
-      description: The page of results to retrieve.
-      schema:
-        type: integer
-        default: 1
+  responses:
+    NotFound:
+      description: The requested resource was not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    ValidationError:
+      description: The request payload failed validation.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Missing or invalid API token.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   schemas:
-    FolderBulkInput:
-      type: object
-      required:
-      - folders
-      properties:
-        folders:
-          type: array
-          maxItems: 100
-          items:
-            $ref: '#/components/schemas/Folder'
-    IdArray:
-      type: object
-      required:
-      - ids
-      properties:
-        ids:
-          type: array
-          items:
-            type: integer
     CaseList:
       type: object
       properties:
@@ -337,52 +313,6 @@ components:
               type: string
             message:
               type: string
-    Attachment:
-      type: object
-      properties:
-        id:
-          type: integer
-        case_id:
-          type: integer
-        filename:
-          type: string
-        size:
-          type: integer
-    DeleteResponse:
-      type: object
-      properties:
-        deleted:
-          type: boolean
-        count:
-          type: integer
-    Case:
-      type: object
-      properties:
-        id:
-          type: integer
-        project_id:
-          type: integer
-        folder_id:
-          type:
-          - integer
-          - 'null'
-        template_id:
-          type:
-          - integer
-          - 'null'
-        name:
-          type: string
-    Folder:
-      type: object
-      properties:
-        id:
-          type: integer
-        parent_id:
-          type:
-          - integer
-          - 'null'
-        name:
-          type: string
     Pagination:
       type: object
       properties:
@@ -400,15 +330,58 @@ components:
           - 'null'
         last_page:
           type: integer
-    FolderList:
+    IdArray:
+      type: object
+      required:
+      - ids
+      properties:
+        ids:
+          type: array
+          items:
+            type: integer
+    Case:
+      type: object
+      properties:
+        id:
+          type: integer
+        project_id:
+          type: integer
+        folder_id:
+          type:
+          - integer
+          - 'null'
+        template_id:
+          type:
+          - integer
+          - 'null'
+        name:
+          type: string
+    FolderBulkInput:
+      type: object
+      required:
+      - folders
+      properties:
+        folders:
+          type: array
+          maxItems: 100
+          items:
+            $ref: '#/components/schemas/Folder'
+    AttachmentList:
       type: object
       properties:
         result:
           type: array
           items:
-            $ref: '#/components/schemas/Folder'
+            $ref: '#/components/schemas/Attachment'
         pagination:
           $ref: '#/components/schemas/Pagination'
+    DeleteResponse:
+      type: object
+      properties:
+        deleted:
+          type: boolean
+        count:
+          type: integer
     CaseBulkInput:
       type: object
       required:
@@ -419,34 +392,61 @@ components:
           maxItems: 100
           items:
             $ref: '#/components/schemas/Case'
-    AttachmentList:
+    Folder:
+      type: object
+      properties:
+        id:
+          type: integer
+        parent_id:
+          type:
+          - integer
+          - 'null'
+        name:
+          type: string
+    FolderList:
       type: object
       properties:
         result:
           type: array
           items:
-            $ref: '#/components/schemas/Attachment'
+            $ref: '#/components/schemas/Folder'
         pagination:
           $ref: '#/components/schemas/Pagination'
-  responses:
-    ValidationError:
-      description: The request payload failed validation.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    NotFound:
-      description: The requested resource was not found.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    Unauthorized:
-      description: Missing or invalid API token.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
+    Attachment:
+      type: object
+      properties:
+        id:
+          type: integer
+        case_id:
+          type: integer
+        filename:
+          type: string
+        size:
+          type: integer
+  parameters:
+    Page:
+      name: page
+      in: query
+      required: false
+      description: The page of results to retrieve.
+      schema:
+        type: integer
+        default: 1
+    ProjectId:
+      name: project_id
+      in: path
+      required: true
+      description: The ID of the project.
+      schema:
+        type: integer
+    PerPage:
+      name: per_page
+      in: query
+      required: false
+      description: The number of entries per page.
+      schema:
+        type: integer
+        default: 100
   securitySchemes:
     bearerAuth:
       type: http

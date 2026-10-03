@@ -59,31 +59,29 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 components:
-  parameters:
-    PerPage:
-      name: per_page
-      in: query
-      required: false
-      description: The number of entries per page.
-      schema:
-        type: integer
-        default: 100
-    ProjectId:
-      name: project_id
-      in: path
-      required: true
-      description: The ID of the project.
-      schema:
-        type: integer
-    Page:
-      name: page
-      in: query
-      required: false
-      description: The page of results to retrieve.
-      schema:
-        type: integer
-        default: 1
+  responses:
+    NotFound:
+      description: The requested resource was not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Missing or invalid API token.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   schemas:
+    ProjectList:
+      type: object
+      properties:
+        result:
+          type: array
+          items:
+            $ref: '#/components/schemas/Project'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
     Error:
       type: object
       properties:
@@ -111,15 +109,6 @@ components:
           - 'null'
         last_page:
           type: integer
-    ProjectList:
-      type: object
-      properties:
-        result:
-          type: array
-          items:
-            $ref: '#/components/schemas/Project'
-        pagination:
-          $ref: '#/components/schemas/Pagination'
     Project:
       type: object
       properties:
@@ -129,19 +118,30 @@ components:
           type: string
         is_completed:
           type: boolean
-  responses:
-    NotFound:
-      description: The requested resource was not found.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    Unauthorized:
-      description: Missing or invalid API token.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
+  parameters:
+    ProjectId:
+      name: project_id
+      in: path
+      required: true
+      description: The ID of the project.
+      schema:
+        type: integer
+    Page:
+      name: page
+      in: query
+      required: false
+      description: The page of results to retrieve.
+      schema:
+        type: integer
+        default: 1
+    PerPage:
+      name: per_page
+      in: query
+      required: false
+      description: The number of entries per page.
+      schema:
+        type: integer
+        default: 100
   securitySchemes:
     bearerAuth:
       type: http
