@@ -274,88 +274,7 @@ paths:
         '422':
           $ref: '#/components/responses/ValidationError'
 components:
-  responses:
-    NotFound:
-      description: The requested resource was not found.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    ValidationError:
-      description: The request payload failed validation.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    Unauthorized:
-      description: Missing or invalid API token.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
   schemas:
-    CaseList:
-      type: object
-      properties:
-        result:
-          type: array
-          items:
-            $ref: '#/components/schemas/Case'
-        pagination:
-          $ref: '#/components/schemas/Pagination'
-    Error:
-      type: object
-      properties:
-        error:
-          type: object
-          properties:
-            code:
-              type: string
-            message:
-              type: string
-    Pagination:
-      type: object
-      properties:
-        page:
-          type: integer
-        per_page:
-          type: integer
-        prev_page:
-          type:
-          - integer
-          - 'null'
-        next_page:
-          type:
-          - integer
-          - 'null'
-        last_page:
-          type: integer
-    IdArray:
-      type: object
-      required:
-      - ids
-      properties:
-        ids:
-          type: array
-          items:
-            type: integer
-    Case:
-      type: object
-      properties:
-        id:
-          type: integer
-        project_id:
-          type: integer
-        folder_id:
-          type:
-          - integer
-          - 'null'
-        template_id:
-          type:
-          - integer
-          - 'null'
-        name:
-          type: string
     FolderBulkInput:
       type: object
       required:
@@ -375,13 +294,25 @@ components:
             $ref: '#/components/schemas/Attachment'
         pagination:
           $ref: '#/components/schemas/Pagination'
-    DeleteResponse:
+    Error:
       type: object
       properties:
-        deleted:
-          type: boolean
-        count:
-          type: integer
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+            message:
+              type: string
+    IdArray:
+      type: object
+      required:
+      - ids
+      properties:
+        ids:
+          type: array
+          items:
+            type: integer
     CaseBulkInput:
       type: object
       required:
@@ -392,26 +323,6 @@ components:
           maxItems: 100
           items:
             $ref: '#/components/schemas/Case'
-    Folder:
-      type: object
-      properties:
-        id:
-          type: integer
-        parent_id:
-          type:
-          - integer
-          - 'null'
-        name:
-          type: string
-    FolderList:
-      type: object
-      properties:
-        result:
-          type: array
-          items:
-            $ref: '#/components/schemas/Folder'
-        pagination:
-          $ref: '#/components/schemas/Pagination'
     Attachment:
       type: object
       properties:
@@ -423,7 +334,84 @@ components:
           type: string
         size:
           type: integer
+    DeleteResponse:
+      type: object
+      properties:
+        deleted:
+          type: boolean
+        count:
+          type: integer
+    Folder:
+      type: object
+      properties:
+        id:
+          type: integer
+        parent_id:
+          type:
+          - integer
+          - 'null'
+        name:
+          type: string
+    Pagination:
+      type: object
+      properties:
+        page:
+          type: integer
+        per_page:
+          type: integer
+        prev_page:
+          type:
+          - integer
+          - 'null'
+        next_page:
+          type:
+          - integer
+          - 'null'
+        last_page:
+          type: integer
+    CaseList:
+      type: object
+      properties:
+        result:
+          type: array
+          items:
+            $ref: '#/components/schemas/Case'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+    FolderList:
+      type: object
+      properties:
+        result:
+          type: array
+          items:
+            $ref: '#/components/schemas/Folder'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+    Case:
+      type: object
+      properties:
+        id:
+          type: integer
+        project_id:
+          type: integer
+        folder_id:
+          type:
+          - integer
+          - 'null'
+        template_id:
+          type:
+          - integer
+          - 'null'
+        name:
+          type: string
   parameters:
+    ProjectId:
+      name: project_id
+      in: path
+      required: true
+      description: The ID of the project.
+      schema:
+        type: integer
     Page:
       name: page
       in: query
@@ -432,13 +420,6 @@ components:
       schema:
         type: integer
         default: 1
-    ProjectId:
-      name: project_id
-      in: path
-      required: true
-      description: The ID of the project.
-      schema:
-        type: integer
     PerPage:
       name: per_page
       in: query
@@ -447,6 +428,25 @@ components:
       schema:
         type: integer
         default: 100
+  responses:
+    ValidationError:
+      description: The request payload failed validation.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: The requested resource was not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Missing or invalid API token.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   securitySchemes:
     bearerAuth:
       type: http
