@@ -206,6 +206,9 @@ apis:
   - type: Documentation
     url: https://www.testmo.com/blog/announcing-test-case-management-apis-in-testmo/
 common:
+- type: CapabilityMap
+  url: capabilities/testmo-capability-edges.yml
+  name: Testmo Business Capability Map
 - type: AgenticAccess
   url: agentic-access/testmo-agentic-access.yml
 - type: Authentication
