@@ -134,14 +134,20 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 components:
+  responses:
+    Unauthorized:
+      description: Missing or invalid API token.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: The requested resource was not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   parameters:
-    ProjectId:
-      name: project_id
-      in: path
-      required: true
-      description: The ID of the project.
-      schema:
-        type: integer
     PerPage:
       name: per_page
       in: query
@@ -158,41 +164,24 @@ components:
       schema:
         type: integer
         default: 1
+    ProjectId:
+      name: project_id
+      in: path
+      required: true
+      description: The ID of the project.
+      schema:
+        type: integer
   schemas:
-    Result:
+    Error:
       type: object
       properties:
-        id:
-          type: integer
-        run_id:
-          type: integer
-        test_id:
-          type: integer
-        status_id:
-          type: integer
-        created_by:
-          type: integer
-        created_at:
-          type: string
-          format: date-time
-    Run:
-      type: object
-      properties:
-        id:
-          type: integer
-        project_id:
-          type: integer
-        name:
-          type: string
-        is_closed:
-          type: boolean
-        milestone_id:
-          type:
-          - integer
-          - 'null'
-        result_summary:
+        error:
           type: object
-          additionalProperties: true
+          properties:
+            code:
+              type: string
+            message:
+              type: string
     RunList:
       type: object
       properties:
@@ -200,15 +189,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Run'
-        pagination:
-          $ref: '#/components/schemas/Pagination'
-    ResultList:
-      type: object
-      properties:
-        result:
-          type: array
-          items:
-            $ref: '#/components/schemas/Result'
         pagination:
           $ref: '#/components/schemas/Pagination'
     Pagination:
@@ -228,29 +208,49 @@ components:
           - 'null'
         last_page:
           type: integer
-    Error:
+    Run:
       type: object
       properties:
-        error:
+        id:
+          type: integer
+        project_id:
+          type: integer
+        name:
+          type: string
+        is_closed:
+          type: boolean
+        milestone_id:
+          type:
+          - integer
+          - 'null'
+        result_summary:
           type: object
-          properties:
-            code:
-              type: string
-            message:
-              type: string
-  responses:
-    NotFound:
-      description: The requested resource was not found.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    Unauthorized:
-      description: Missing or invalid API token.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
+          additionalProperties: true
+    ResultList:
+      type: object
+      properties:
+        result:
+          type: array
+          items:
+            $ref: '#/components/schemas/Result'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+    Result:
+      type: object
+      properties:
+        id:
+          type: integer
+        run_id:
+          type: integer
+        test_id:
+          type: integer
+        status_id:
+          type: integer
+        created_by:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
   securitySchemes:
     bearerAuth:
       type: http

@@ -68,16 +68,20 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 components:
+  responses:
+    Unauthorized:
+      description: Missing or invalid API token.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: The requested resource was not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   schemas:
-    MilestoneList:
-      type: object
-      properties:
-        result:
-          type: array
-          items:
-            $ref: '#/components/schemas/Milestone'
-        pagination:
-          $ref: '#/components/schemas/Pagination'
     Milestone:
       type: object
       properties:
@@ -92,6 +96,16 @@ components:
         statistics:
           type: object
           additionalProperties: true
+    Error:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+            message:
+              type: string
     Pagination:
       type: object
       properties:
@@ -109,24 +123,16 @@ components:
           - 'null'
         last_page:
           type: integer
-    Error:
+    MilestoneList:
       type: object
       properties:
-        error:
-          type: object
-          properties:
-            code:
-              type: string
-            message:
-              type: string
+        result:
+          type: array
+          items:
+            $ref: '#/components/schemas/Milestone'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
   parameters:
-    ProjectId:
-      name: project_id
-      in: path
-      required: true
-      description: The ID of the project.
-      schema:
-        type: integer
     PerPage:
       name: per_page
       in: query
@@ -143,19 +149,13 @@ components:
       schema:
         type: integer
         default: 1
-  responses:
-    NotFound:
-      description: The requested resource was not found.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    Unauthorized:
-      description: Missing or invalid API token.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
+    ProjectId:
+      name: project_id
+      in: path
+      required: true
+      description: The ID of the project.
+      schema:
+        type: integer
   securitySchemes:
     bearerAuth:
       type: http

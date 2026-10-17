@@ -74,14 +74,20 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 components:
+  responses:
+    Unauthorized:
+      description: Missing or invalid API token.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: The requested resource was not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   parameters:
-    ProjectId:
-      name: project_id
-      in: path
-      required: true
-      description: The ID of the project.
-      schema:
-        type: integer
     PerPage:
       name: per_page
       in: query
@@ -98,19 +104,13 @@ components:
       schema:
         type: integer
         default: 1
-  responses:
-    NotFound:
-      description: The requested resource was not found.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    Unauthorized:
-      description: Missing or invalid API token.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
+    ProjectId:
+      name: project_id
+      in: path
+      required: true
+      description: The ID of the project.
+      schema:
+        type: integer
   schemas:
     AutomationRun:
       type: object
@@ -128,15 +128,16 @@ components:
         result_summary:
           type: object
           additionalProperties: true
-    AutomationRunList:
+    Error:
       type: object
       properties:
-        result:
-          type: array
-          items:
-            $ref: '#/components/schemas/AutomationRun'
-        pagination:
-          $ref: '#/components/schemas/Pagination'
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+            message:
+              type: string
     Pagination:
       type: object
       properties:
@@ -154,16 +155,15 @@ components:
           - 'null'
         last_page:
           type: integer
-    Error:
+    AutomationRunList:
       type: object
       properties:
-        error:
-          type: object
-          properties:
-            code:
-              type: string
-            message:
-              type: string
+        result:
+          type: array
+          items:
+            $ref: '#/components/schemas/AutomationRun'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
   securitySchemes:
     bearerAuth:
       type: http
