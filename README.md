@@ -1,4 +1,4 @@
-# Testmo (testmo)
+# Testmo
 
 <!-- API-EVANGELIST-PROVENANCE:BEGIN -->
 > ### About this repository
@@ -64,189 +64,128 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-Testmo is a unified test management platform that brings manual test cases, test automation, and exploratory testing together in one tool, with reporting, milestones, and issue-tracker and CI integrations. Testmo exposes a documented REST API for reading its major entities - projects, test runs, run results, automation runs, automation sources, exploratory sessions, and milestones - so teams can build custom analytics, reporting, and integrations. A beta test case management API adds the only write surface (cases, folders, attachments), and the Testmo CLI (`@testmo/testmo-cli`) submits automation results into Testmo from CI/CD pipelines.
+Testmo is a unified test management platform that brings manual test cases, test automation, and exploratory testing together in one tool, with reporting, milestones, and issue-tracker and CI integrations. Testmo exposes a documented REST API (per-instance base https://{instance}.testmo.net/api/v1, Bearer API-token auth) that reads projects, test runs, run results, automation runs, automation sources, exploratory sessions, and milestones for custom analytics, reporting, and integrations - plus a beta test case management API and a CLI (@testmo/testmo-cli) that submits automation results from CI/CD pipelines.
 
-**APIs.json:** [https://raw.githubusercontent.com/api-evangelist/testmo/refs/heads/main/apis.yml](https://raw.githubusercontent.com/api-evangelist/testmo/refs/heads/main/apis.yml)
+**Areas:** Test Runs · Test Management · Test Automation · QA · Exploratory Testing · CI/CD · Quality Assurance · Developer Tools
 
-## Access Model (Honest Notes)
+## Testmo on APIs.io
 
-- **Testmo is a commercial, hosted SaaS product.** There is no free-forever plan - paid plans start at Team ($99/month) after a free trial. The API is available on your paid instance; it is not a public, open, sign-up-and-call API.
-- **The API is per-instance.** The base URL is `https://{instance}.testmo.net/api/v1`, where `{instance}` is your own Testmo subdomain. There is no single shared api.testmo.com host.
-- **Authentication is a personal API token (Bearer).** You generate an API key from your profile page inside Testmo and pass it as `Authorization: Bearer <token>`. Access is scoped to your permissions; some endpoints (users, groups, roles) are admin-only.
-- **Mostly read-only.** The core REST API is read-only (GET) over projects, runs, results, automation runs, automation sources, sessions, and milestones - built for analytics, reporting, and integrations. The **test case management API** (cases, folders, attachments) adds create/update/delete but is in **beta** and may change.
-- **Writing results is done via the CLI, not the REST API.** New automation runs and results are typically pushed with `testmo automation:run:submit` from CI, which parses JUnit-style XML and creates the run for you - there is no documented public REST endpoint for creating a manual or automation run.
-- The OpenAPI file and Postman/Open Collection in this repo are **modeled** from Testmo's public documentation and blog posts. Endpoint paths, pagination, and auth are grounded in those sources; request/response schemas are illustrative. Verify against the live docs and your instance before relying on them.
+Everything profiled for Testmo is published on APIs.io rather than in this repository. Start at the provider page — **[apis.io/providers/testmo/](https://apis.io/providers/testmo/)** — or go straight to one of the APIs or properties below.
 
-## Tags
+### APIs (7)
 
-- Test Runs
-- Test Management
-- Test Automation
-- QA
-- Exploratory Testing
-- CI/CD
-- Quality Assurance
+- [Testmo Automation Runs API](https://apis.io/apis/testmo/testmo-automation-runs-api/) — Automation runs submitted from CI/CD, with aggregated statistics.
+- [Testmo Automation Sources API](https://apis.io/apis/testmo/testmo-automation-sources-api/) — Automation sources grouping runs, with aggregated metrics.
+- [Testmo Milestones API](https://apis.io/apis/testmo/testmo-milestones-api/) — Milestones and their linked run and session statistics.
+- [Testmo Projects API](https://apis.io/apis/testmo/testmo-projects-api/) — Top-level projects that contain runs, sessions, milestones, and cases.
+- [Testmo Sessions API](https://apis.io/apis/testmo/testmo-sessions-api/) — Exploratory test sessions and session note statistics.
+- [Testmo Test Case Management API](https://apis.io/apis/testmo/testmo-test-case-management-api/) — Beta read/write API for cases, folders, and attachments.
+- [Testmo Test Runs API](https://apis.io/apis/testmo/testmo-test-runs-api/) — Manual test runs and their individual results.
 
-## Timestamps
+### Published properties
 
-- **Created:** 2026-07-11
-- **Modified:** 2026-07-11
+Each property below is a page on APIs.io carrying the machine-readable artifact and what it says.
 
-## APIs
+#### Agentic access (1)
 
-### Testmo Test Runs API
+Which operations an agent can call, which act, and which need a human in the loop.
 
-Read a project's manual test runs and their individual results. Get a single run or all active or closed runs with aggregated statistics and test numbers, and extract or filter individual test results (by status, creator, and date) from a run.
+- [Testmo Agentic Access](https://apis.io/agentic-access/testmo/testmo-agentic-access/)
 
-- **Human URL:** [https://docs.testmo.com/api](https://docs.testmo.com/api)
-- **Base URL:** `https://{instance}.testmo.net/api/v1`
+#### Collections (8)
 
-#### Tags
+Postman and Open Collection request collections.
 
-- Test Runs
-- Test Management
-- QA
+- [Testmo REST API](https://apis.io/collections/testmo/open-testmo/)
+- [Testmo REST Automation Runs API](https://apis.io/collections/testmo/open-testmo-automation-runs-api/)
+- [Testmo REST Automation Runs Automation Sources API](https://apis.io/collections/testmo/open-testmo-automation-sources-api/)
+- [Testmo REST Automation Runs Milestones API](https://apis.io/collections/testmo/open-testmo-milestones-api/)
+- [Testmo REST Automation Runs Projects API](https://apis.io/collections/testmo/open-testmo-projects-api/)
+- [Testmo REST Automation Runs Sessions API](https://apis.io/collections/testmo/open-testmo-sessions-api/)
+- [Testmo REST Automation Runs Test Case Management API](https://apis.io/collections/testmo/open-testmo-test-case-management-api/)
+- [Testmo REST Automation Runs Test Runs API](https://apis.io/collections/testmo/open-testmo-test-runs-api/)
 
-#### Properties
+#### Security (1)
 
-- [Documentation](https://docs.testmo.com/api)
-- [API Reference](https://www.testmo.com/blog/announcing-the-new-runs-results-api-in-testmo/)
-- [OpenAPI](openapi/testmo-openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [Postman Collection](collections/testmo.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/testmo.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
+Authentication, trust centre, and vulnerability disclosure.
 
-### Testmo Automation Runs API
+- [Testmo Authentication](https://apis.io/security/testmo/testmo-authentication/)
 
-Read one or all automation runs for a project, including aggregated statistics of the test results and the overall run status. Automation runs are typically created from CI/CD via the Testmo CLI and read back through this API for reporting and analytics.
+#### Plans and pricing (1)
 
-- **Human URL:** [https://docs.testmo.com/api](https://docs.testmo.com/api)
-- **Base URL:** `https://{instance}.testmo.net/api/v1`
+Published plans, tiers and prices.
 
-#### Tags
+- [Testmo Plans Pricing](https://apis.io/plans/testmo/testmo-plans-pricing/)
 
-- Automation Runs
-- Test Automation
-- CI/CD
+#### Rate limits (1)
 
-#### Properties
+Published request limits.
 
-- [Documentation](https://docs.testmo.com/api)
-- [API Reference](https://www.testmo.com/blog/api-update-analytics/)
-- [OpenAPI](openapi/testmo-openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [Postman Collection](collections/testmo.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/testmo.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
+- [Testmo Rate Limits](https://apis.io/rate-limits/testmo/testmo-rate-limits/)
 
-### Testmo Automation Sources API
+#### FinOps (1)
 
-Query the test automation sources of a project, including average and aggregated source statistics and metrics. Sources group automation runs (for example "backend-unit" or "e2e") so trends can be tracked per pipeline over time.
+What the API costs to run, by operation.
 
-- **Human URL:** [https://docs.testmo.com/api](https://docs.testmo.com/api)
-- **Base URL:** `https://{instance}.testmo.net/api/v1`
+- [Testmo Finops](https://apis.io/finops/testmo/testmo-finops/)
 
-#### Tags
+## Where to find this API
 
-- Automation Sources
-- Test Automation
-- Metrics
+Links to the company's own pages. This repository publishes no copy of their specifications — the canonical document is theirs and lives at the URLs below.
 
-#### Properties
-
-- [Documentation](https://docs.testmo.com/api)
-- [OpenAPI](openapi/testmo-openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [Postman Collection](collections/testmo.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/testmo.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
-
-### Testmo Sessions API
-
-Read the exploratory test sessions of a project. Get a single session or all active or closed sessions, along with result statistics of the session notes, for reporting on exploratory testing effort.
-
-- **Human URL:** [https://docs.testmo.com/api](https://docs.testmo.com/api)
-- **Base URL:** `https://{instance}.testmo.net/api/v1`
-
-#### Tags
-
-- Exploratory Testing
-- Sessions
-- QA
-
-#### Properties
-
-- [Documentation](https://docs.testmo.com/api)
-- [OpenAPI](openapi/testmo-openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [Postman Collection](collections/testmo.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/testmo.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
-
-### Testmo Projects API
-
-List all projects and retrieve a single project. Projects are the top-level container that runs, automation runs, sessions, milestones, and cases belong to, so this endpoint anchors most other API calls.
-
-- **Human URL:** [https://docs.testmo.com/api](https://docs.testmo.com/api)
-- **Base URL:** `https://{instance}.testmo.net/api/v1`
-
-#### Tags
-
-- Projects
-- Test Management
-
-#### Properties
-
-- [Documentation](https://docs.testmo.com/api)
-- [OpenAPI](openapi/testmo-openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [Postman Collection](collections/testmo.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/testmo.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
-
-### Testmo Milestones API
-
-Get one milestone or all milestones of a project, optionally including milestone statistics for the linked test runs and sessions, to report progress against a release or sprint.
-
-- **Human URL:** [https://docs.testmo.com/api](https://docs.testmo.com/api)
-- **Base URL:** `https://{instance}.testmo.net/api/v1`
-
-#### Tags
-
-- Milestones
-- Test Management
-- Reporting
-
-#### Properties
-
-- [Documentation](https://docs.testmo.com/api)
-- [OpenAPI](openapi/testmo-openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [Postman Collection](collections/testmo.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/testmo.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
-
-### Testmo Test Case Management API
-
-Beta read/write API for the test case repository - list, create, update, and delete cases and folders in bulk (up to 100 per request) and manage case attachments. The only write surface in the Testmo API; endpoints are in beta and may change.
-
-- **Human URL:** [https://www.testmo.com/blog/announcing-test-case-management-apis-in-testmo/](https://www.testmo.com/blog/announcing-test-case-management-apis-in-testmo/)
-- **Base URL:** `https://{instance}.testmo.net/api/v1`
-
-#### Tags
-
-- Test Cases
-- Test Management
-- Beta
-
-#### Properties
-
-- [Documentation](https://www.testmo.com/blog/announcing-test-case-management-apis-in-testmo/)
-- [OpenAPI](openapi/testmo-openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [Postman Collection](collections/testmo.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/testmo.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
-
-## Common Properties
-
-- [Authentication](authentication/testmo-authentication.yml)
-- [LinkedIn](https://www.linkedin.com/company/testmo)
 - [Website](https://www.testmo.com/)
 - [Documentation](https://docs.testmo.com/)
-- [Plans](plans/testmo-plans-pricing.yml)
-- [Rate Limits](rate-limits/testmo-rate-limits.yml)
-- [Fin Ops](finops/testmo-finops.yml)
 - [Blog](https://www.testmo.com/blog/)
 
-## Maintainers
+## API Evangelist rating
 
-**FN:** Kin Lane
-**Email:** kin@apievangelist.com
+**Kin Score 27.1** — thin · rubric 0.24.0 · scored 2026-10-17
+
+| Facet | Score |
+|---|---|
+| Discoverability | 66.1 |
+| Contract quality | 54.1 |
+| Contract governance | 0.0 |
+| Operational transparency | 7.9 |
+| Developer ergonomics | 32.1 |
+| Access clarity | 7.9 |
+
+**Agent readiness 17.9** — agent-aware
+
+| Agent-readiness dimension | Result |
+|---|---|
+| Spec Presence | yes |
+| Agentic Access | derived (partial credit) |
+| Reversibility Documented | — |
+| MCP Server | — |
+| Auth Clarity | bearer (partial credit) |
+| Idempotency | — |
+| Error Semantics | — |
+| OpenAPI Examples | — |
+| Rate Limit Signal | derived (partial credit) |
+| Event Surface Described | — |
+| Agent Skills | — |
+| Well Known Catalog | — |
+| Consent Identity | — |
+| Agent Card | — |
+| Dry Run Mode | — |
+| Delegated Identity | — |
+| Protected Resource Metadata | — |
+| Dynamic Client Registration | — |
+| Agentic Commerce | — |
+
+**Regulatory alignment 5.9** — Horizontal (data, software, accessibility, platform)
+
+The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/testmo/](https://apis.io/providers/testmo/).
+
+## How this profile is made
+
+API Evangelist profiles a company's public API surface the way a developer would find it: the website, developer portal and documentation, the specifications it publishes, its public repositories, and its pricing, status and changelog pages. From that it derives the properties above — contracts split per API, workflows, schemas, collections, governance rules, plans and rate limits — and scores them against the published [Kin Score rubric](https://github.com/api-evangelist/kin-score).
+
+The artifacts are published on [APIs.io](https://apis.io), not in this repository. This repository is the public record for Testmo: the place to say something is wrong, missing or out of date, and to ask for a re-score or a removal.
+
+## Open an issue
+
+- **Something about this listing** — a wrong description, a missing API, a stale artifact or a question about the rating: [open an issue on this repository](https://github.com/api-evangelist/testmo/issues/new).
+- **A new API, or one that is not in the catalog yet** — [submit it on APIs.io](https://apis.io/add/).
+- **Anything else** — [the APIs.io inbox](https://github.com/api-search/inbox/issues/new) or [info@apievangelist.com](mailto:info@apievangelist.com).
